@@ -605,3 +605,7 @@ class ActivityLog(models.Model):
     
     def __str__(self):
         return f"{self.contributor.username} - {self.activity_type} at {self.timestamp}"
+
+
+# Import sprint models to make them available
+from .sprint_models import Sprint, SprintIssue, TeamMemberCapacity, SprintVelocityHistory
