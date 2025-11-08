@@ -276,6 +276,11 @@ class Repository(models.Model):
                                      related_name='repositories', null=True, blank=True)
     is_private = models.BooleanField(default=False)
     
+    # Local Git Repository (Self-hosted)
+    is_local = models.BooleanField(default=False)  # True if hosted on our server
+    local_path = models.CharField(max_length=500, blank=True, null=True)  # Path to .git folder
+    default_branch = models.CharField(max_length=100, default='main')
+    
     # Health & Analytics
     stars = models.IntegerField(default=0)
     forks = models.IntegerField(default=0)

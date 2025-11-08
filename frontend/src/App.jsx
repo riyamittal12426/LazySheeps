@@ -16,6 +16,8 @@ import RepositorySelection from './pages/RepositorySelection';
 import TeamHealthRadar from './components/TeamHealthRadar';
 import AutoTriage from './components/AutoTriage';
 import ChatBot from './components/ChatBot';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import { ReactFlowProvider } from '@xyflow/react';
 
 // AUTHENTICATION DISABLED - All routes are now accessible
@@ -28,9 +30,9 @@ function AppRoutes() {
   return (
     <ReactFlowProvider>
       <Routes>
-        {/* Auth Routes - Disabled but kept for future use */}
-        {/* <Route path="/sign-in/*" element={...} /> */}
-        {/* <Route path="/sign-up/*" element={...} /> */}
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />

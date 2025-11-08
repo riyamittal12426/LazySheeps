@@ -45,6 +45,10 @@ from api.webhook_views import (
 )
 from api.team_health import team_health_radar, contributor_health_detail
 from api.live_stream import live_event_stream
+from api.git_server import (
+    git_http_backend, create_repository, browse_repository, get_file,
+    repository_commits, post_receive_webhook, list_user_repositories
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -158,4 +162,17 @@ urlpatterns = [
     
     # Live Activity Stream (SSE)
     path('api/events/stream/', live_event_stream, name='live_event_stream'),
+    
+    # Local Git Server (Self-hosted repositories)
+    path('api/git/create/', create_repository, name='create_git_repository'),
+    path('api/git/<str:username>/<str:repo_name>/browse/', browse_repository, name='browse_repository'),
+    path('api/git/<str:username>/<str:repo_name>/file/', get_file, name='get_file'),
+    path('api/git/<str:username>/<str:repo_name>/commits/', repository_commits, name='repository_commits'),
+    path('api/git/<str:username>/repositories/', list_user_repositories, name='list_user_repositories'),
+    path('api/git/webhook/post-receive/', post_receive_webhook, name='post_receive_webhook'),
+    
+    # Git HTTP Backend (Smart Protocol for push/pull)
+    path('git/<str:username>/<str:repo_name>/info/refs', git_http_backend, {'service': 'info'}, name='git_info_refs'),
+    path('git/<str:username>/<str:repo_name>/git-upload-pack', git_http_backend, {'service': 'git-upload-pack'}, name='git_upload_pack'),
+    path('git/<str:username>/<str:repo_name>/git-receive-pack', git_http_backend, {'service': 'git-receive-pack'}, name='git_receive_pack'),
 ]

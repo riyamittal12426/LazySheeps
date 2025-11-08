@@ -5,7 +5,7 @@ import sys
 import os
 import django
 
-# Add the backend directory to the Python path
+
 backend_dir = r'C:\Users\ayush\OneDrive\Desktop\LazySheeps\backend'
 sys.path.insert(0, backend_dir)
 os.chdir(backend_dir)
