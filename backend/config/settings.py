@@ -64,6 +64,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", # Default Vite port
     "http://127.0.0.1:5173",
+    "http://localhost:5174", # Alternative Vite port
+    "http://127.0.0.1:5174",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -177,3 +179,14 @@ GITHUB_WEBHOOK_SECRET = os.getenv('GITHUB_WEBHOOK_SECRET', '')
 GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID', '')
 GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET', '')
 GITHUB_REDIRECT_URI = os.getenv('GITHUB_REDIRECT_URI', 'http://localhost:3000/auth/github/callback')
+
+# GitHub App Integration (Enterprise-grade)
+GITHUB_APP_ID = os.getenv('GITHUB_APP_ID', '')
+GITHUB_APP_CLIENT_ID = os.getenv('GITHUB_APP_CLIENT_ID', '')
+GITHUB_APP_CLIENT_SECRET = os.getenv('GITHUB_APP_CLIENT_SECRET', '')
+GITHUB_APP_PRIVATE_KEY = os.getenv('GITHUB_APP_PRIVATE_KEY', '').replace('\\n', '\n')
+GITHUB_APP_WEBHOOK_SECRET = os.getenv('GITHUB_APP_WEBHOOK_SECRET', '')
+GITHUB_APP_SLUG = os.getenv('GITHUB_APP_SLUG', 'lazysheeps-analytics')
+GITHUB_APP_BASE_URL = os.getenv('GITHUB_APP_BASE_URL', 'http://localhost:5173')
+GITHUB_APP_REDIRECT_URI = os.getenv('GITHUB_APP_REDIRECT_URI', 'http://localhost:5173/auth/github-app/callback')
+GITHUB_WEBHOOK_URL = os.getenv('GITHUB_WEBHOOK_URL', 'https://your-domain.com/api/github-app/webhook/')
