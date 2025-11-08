@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import OrganizationGraph from '../components/OrganizationGraph';
 import ImportRepository from '../components/ImportRepository';
-import GitHubAppConnect from '../components/GitHubAppConnect';
-import LiveActivityFeed from '../components/LiveActivityFeed'; 
 import { 
   ChartBarIcon, 
   UserGroupIcon, 
@@ -13,15 +10,18 @@ import {
   CheckCircleIcon,
   ArrowPathIcon,
   CalendarIcon,
-  ChartBarSquareIcon,
+  SparklesIcon,
   ArrowTopRightOnSquareIcon,
-  AdjustmentsHorizontalIcon,
-  DocumentTextIcon,
+  FireIcon,
+  BoltIcon,
+  ChartPieIcon,
+  AcademicCapIcon,
+  RocketLaunchIcon,
+  CpuChipIcon,
+  BeakerIcon,
 } from '@heroicons/react/24/outline';
 import { 
-  PresentationChartBarIcon, 
-  LinkIcon,
-  ArrowTrendingUpIcon,
+  ChartBarSquareIcon,
 } from '@heroicons/react/20/solid';
 
 // Format dates nicely
@@ -36,159 +36,129 @@ const formatDate = (dateString) => {
 
 export default function Dashboard() {
   const { isLoading, error, contributors, repositories } = useData();
-  const [showSettings, setShowSettings] = useState(false);
-  const [activeRepositories, setActiveRepositories] = useState([]);
-  const [activeContributors, setActiveContributors] = useState([]);
-  const [recentActivity, setRecentActivity] = useState([]);
-  const [graphKey, setGraphKey] = useState(Date.now());
-  const [graphZoomed, setGraphZoomed] = useState(false);
-
-  // Settings for graph display
-  const [settings, setSettings] = useState({
-    showLabels: true,
-    showAllLinks: true,
-    animated: true,
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    totalRepos: 0,
+    totalContributors: 0,
+    totalCommits: 0,
+    totalIssues: 0,
   });
 
-  // Calculate stats and prepare data once loaded
+  // Navigation cards configuration
+  const navigationCards = [
+    {
+      title: 'Analytics',
+      description: 'View comprehensive analytics and insights',
+      icon: ChartPieIcon,
+      gradient: 'from-purple-500 to-pink-500',
+      route: '/app/analytics',
+      stats: `${stats.totalCommits} commits analyzed`,
+      iconBg: 'bg-purple-100',
+      iconColor: 'text-purple-600',
+    },
+    {
+      title: 'Contributors',
+      description: 'Manage and view all team contributors',
+      icon: UserGroupIcon,
+      gradient: 'from-blue-500 to-cyan-500',
+      route: '/app/contributors',
+      stats: `${stats.totalContributors} active members`,
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+    },
+    {
+      title: 'Repositories',
+      description: 'Browse and manage your repositories',
+      icon: FolderIcon,
+      gradient: 'from-indigo-500 to-purple-500',
+      route: '/app/repositories',
+      stats: `${stats.totalRepos} repositories`,
+      iconBg: 'bg-indigo-100',
+      iconColor: 'text-indigo-600',
+    },
+    {
+      title: 'Contributor Stats',
+      description: 'Detailed statistics for each contributor',
+      icon: ChartBarSquareIcon,
+      gradient: 'from-green-500 to-emerald-500',
+      route: '/app/contributor-stats',
+      stats: 'Performance metrics',
+      iconBg: 'bg-green-100',
+      iconColor: 'text-green-600',
+    },
+    {
+      title: 'Enhanced Dashboard',
+      description: 'Advanced visualization and reports',
+      icon: RocketLaunchIcon,
+      gradient: 'from-orange-500 to-red-500',
+      route: '/app/enhanced-dashboard',
+      stats: 'Advanced insights',
+      iconBg: 'bg-orange-100',
+      iconColor: 'text-orange-600',
+    },
+    {
+      title: 'Llama Chat',
+      description: 'AI-powered assistant for your projects',
+      icon: CpuChipIcon,
+      gradient: 'from-teal-500 to-green-500',
+      route: '/app/llama-chat',
+      stats: 'Ask anything',
+      iconBg: 'bg-teal-100',
+      iconColor: 'text-teal-600',
+    },
+    {
+      title: 'Leaderboard',
+      description: 'Top performers and rankings',
+      icon: AcademicCapIcon,
+      gradient: 'from-yellow-500 to-orange-500',
+      route: '/app/leaderboard',
+      stats: 'Team rankings',
+      iconBg: 'bg-yellow-100',
+      iconColor: 'text-yellow-600',
+    },
+    {
+      title: 'Test Features',
+      description: 'Experimental features and testing',
+      icon: BeakerIcon,
+      gradient: 'from-pink-500 to-rose-500',
+      route: '/app/test',
+      stats: 'Try new features',
+      iconBg: 'bg-pink-100',
+      iconColor: 'text-pink-600',
+    },
+  ];
+
+  // Calculate stats
   useEffect(() => {
     if (!isLoading && contributors && repositories) {
-      // Find most active repositories based on combined commits and issues
-      const repoActivity = repositories.map(repo => {
-        const repoIssues = contributors.flatMap(contributor =>
-          contributor.works
-            .filter(work => work.repository === repo.id)
-            .flatMap(work => work.issues || [])
-        );
-        
-        const repoCommits = contributors.flatMap(contributor =>
-          contributor.works
-            .filter(work => work.repository === repo.id)
-            .flatMap(work => work.commits || [])
-        );
-        
-        return {
-          ...repo,
-          activityCount: repoIssues.length + repoCommits.length,
-          lastActivity: [...repoIssues, ...repoCommits]
-            .map(item => new Date(item.updated_at))
-            .sort((a, b) => b - a)[0] || new Date(repo.updated_at)
-        };
-      });
-      
-      // Sort by activity count, then by most recent activity
-      const sortedRepos = [...repoActivity].sort((a, b) => {
-        if (b.activityCount === a.activityCount) {
-          return b.lastActivity - a.lastActivity;
-        }
-        return b.activityCount - a.activityCount;
-      });
-      
-      setActiveRepositories(sortedRepos.slice(0, 3));
-      
-      // Find most active contributors based on combined commits and issues
-      const contributorActivity = contributors.map(contributor => {
-        const issuesCount = contributor.works.reduce(
-          (acc, work) => acc + (work.issues?.length || 0), 0
-        );
-        
-        const commitsCount = contributor.works.reduce(
+      const totalCommits = contributors.reduce(
+        (total, contributor) => total + contributor.works.reduce(
           (acc, work) => acc + (work.commits?.length || 0), 0
-        );
-        
-        return {
-          ...contributor,
-          activityCount: issuesCount + commitsCount
-        };
+        ), 0
+      );
+
+      const totalIssues = contributors.reduce(
+        (total, contributor) => total + contributor.works.reduce(
+          (acc, work) => acc + (work.issues?.length || 0), 0
+        ), 0
+      );
+
+      setStats({
+        totalRepos: repositories.length,
+        totalContributors: contributors.length,
+        totalCommits,
+        totalIssues,
       });
-      
-      const sortedContributors = [...contributorActivity].sort(
-        (a, b) => b.activityCount - a.activityCount
-      );
-      
-      setActiveContributors(sortedContributors.slice(0, 3));
-      
-      // Create recent activity timeline
-      const allActivity = contributors.flatMap(contributor =>
-        contributor.works.flatMap(work => {
-          const repoName = repositories.find(repo => repo.id === work.repository)?.name || 'Unknown';
-          
-          return [
-            ...(work.commits || []).map(commit => ({
-              type: 'commit',
-              date: new Date(commit.updated_at),
-              contributor: contributor.username,
-              contributorId: contributor.id,
-              contributorAvatar: contributor.avatar_url,
-              repository: repoName,
-              repositoryId: work.repository,
-              summary: commit.summary,
-              url: commit.url
-            })),
-            ...(work.issues || []).map(issue => ({
-              type: 'issue',
-              date: new Date(issue.updated_at),
-              contributor: contributor.username,
-              contributorId: contributor.id,
-              contributorAvatar: contributor.avatar_url,
-              repository: repoName,
-              repositoryId: work.repository,
-              summary: issue.summary,
-              url: issue.url
-            }))
-          ];
-        })
-      );
-      
-      // Sort by most recent first and limit to 5 items
-      const sortedActivity = allActivity.sort((a, b) => b.date - a.date).slice(0, 5);
-      setRecentActivity(sortedActivity);
     }
   }, [isLoading, contributors, repositories]);
 
-  // Refresh the graph with new settings
-  const refreshGraph = () => {
-    setGraphKey(Date.now());
-  };
-
-  // Toggle graph settings menu
-  const toggleSettings = () => {
-    setShowSettings(prev => !prev);
-  };
-
-  // Update a specific setting
-  const updateSetting = (key, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  // Toggle graph zoom state
-  const toggleGraphZoom = () => {
-    setGraphZoomed(prev => !prev);
-  };
-
-  // Calculate total stats
-  const totalIssues = contributors?.reduce(
-    (total, contributor) => total + contributor.works.reduce(
-      (acc, work) => acc + (work.issues?.length || 0), 0
-    ), 0
-  ) || 0;
-
-  const totalCommits = contributors?.reduce(
-    (total, contributor) => total + contributor.works.reduce(
-      (acc, work) => acc + (work.commits?.length || 0), 0
-    ), 0
-  ) || 0;
-
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-          <h3 className="text-lg font-medium text-gray-800">Loading Organization Data</h3>
-          <p className="mt-2 text-sm text-gray-500">Preparing your dashboard...</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <h3 className="text-lg font-semibold text-gray-900">Loading Dashboard</h3>
+          <p className="text-sm text-gray-500 mt-2">Preparing your insights...</p>
         </div>
       </div>
     );
@@ -196,16 +166,16 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="rounded-lg bg-red-50 p-8 text-center">
-          <div className="h-12 w-12 text-red-500 mx-auto mb-4">⚠️</div>
-          <h3 className="text-xl font-medium text-gray-800">Error loading dashboard data</h3>
-          <p className="mt-2 text-gray-600">{error}</p>
+      <div className="max-w-2xl mx-auto mt-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <div className="text-red-600 text-4xl mb-3">⚠️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
-            <ArrowPathIcon className="mr-2 h-4 w-4" />
+            <ArrowPathIcon className="h-4 w-4 mr-2" />
             Retry
           </button>
         </div>
@@ -213,444 +183,166 @@ export default function Dashboard() {
     );
   }
 
-  const handleImportSuccess = (repository) => {
-    console.log('Repository imported:', repository);
-    window.location.reload();
-  };
-
   return (
-    <div className="max-w-7xl mx-auto pb-12">
-      {/* Dashboard Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-blue-500 rounded-lg shadow-lg mb-8 overflow-hidden">
-        <div className="px-6 py-8 sm:px-10">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center">
-              <PresentationChartBarIcon className="h-8 w-8 text-white mr-4" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
+        }}></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <SparklesIcon className="h-12 w-12 text-yellow-300 animate-pulse" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Welcome to Your Dashboard
+            </h1>
+            <p className="text-lg text-indigo-100 mb-6 max-w-2xl mx-auto">
+              Explore powerful features to manage your repositories, analyze contributions, and collaborate with your team
+            </p>
+            <div className="flex items-center justify-center gap-4 text-white">
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <CalendarIcon className="h-5 w-5" />
+                <span className="text-sm font-medium">{formatDate(new Date())}</span>
+              </div>
+              <ImportRepository onImportSuccess={() => window.location.reload()} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transform hover:scale-105 transition-all duration-200 hover:shadow-xl">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-white">Hi there,</h1>
-                <p className="text-indigo-100 mt-1">
-                  Here's all you need to know about the Llama team.
+                <p className="text-sm font-medium text-gray-600">Repositories</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalRepos}</p>
+                <p className="text-xs text-green-600 mt-2 flex items-center font-semibold">
+                  <FireIcon className="h-4 w-4 mr-1" />
+                  {stats.totalRepos > 0 ? 'Active Projects' : 'Get Started'}
                 </p>
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <div className="flex items-center space-x-2">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-800 bg-opacity-50 text-white">
-                  <FolderIcon className="mr-1.5 h-4 w-4" />
-                  {repositories?.length || 0} Repos
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-800 bg-opacity-50 text-white">
-                  <UserGroupIcon className="mr-1.5 h-4 w-4" />
-                  {contributors?.length || 0} Contributors
-                </span>
-                <span className="hidden md:inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-800 bg-opacity-50 text-white">
-                  <CalendarIcon className="mr-1.5 h-4 w-4" />
-                  {formatDate(new Date())}
-                </span>
+              <div className="h-16 w-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <FolderIcon className="h-8 w-8 text-white" />
               </div>
-              <ImportRepository onImportSuccess={handleImportSuccess} />
             </div>
           </div>
-        </div>
 
-        {/* Stats Cards Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 pb-6 sm:px-10">
-          <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center">
-              <div className="bg-indigo-100 rounded-full p-2 mr-3">
-                <FolderIcon className="h-5 w-5 text-indigo-600" />
-              </div>
-              <div>
-                <div className="font-bold text-2xl text-gray-800">{repositories?.length || 0}</div>
-                <div className="text-xs text-gray-500">Repositories</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center">
-              <div className="bg-blue-100 rounded-full p-2 mr-3">
-                <UserGroupIcon className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <div className="font-bold text-2xl text-gray-800">{contributors?.length || 0}</div>
-                <div className="text-xs text-gray-500">Contributors</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center">
-              <div className="bg-green-100 rounded-full p-2 mr-3">
-                <CheckCircleIcon className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <div className="font-bold text-2xl text-gray-800">{totalIssues}</div>
-                <div className="text-xs text-gray-500">Resolved Issues</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center">
-              <div className="bg-amber-100 rounded-full p-2 mr-3">
-                <CodeBracketIcon className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <div className="font-bold text-2xl text-gray-800">{totalCommits}</div>
-                <div className="text-xs text-gray-500">Total Commits</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Live Activity Feed */}
-      <div className="mb-8">
-        <LiveActivityFeed />
-      </div>
-
-      {/* GitHub App Integration - ONE-CLICK ORG IMPORT */}
-      <div className="mb-8">
-        <GitHubAppConnect />
-      </div>
-
-      {/* Commit Summaries Card */}
-      <div className="mb-8">
-        <Link 
-          to="/analytics?tab=summaries"
-          className="block bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:scale-[1.02] duration-200"
-        >
-          <div className="px-6 py-8 sm:px-8 sm:py-10">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transform hover:scale-105 transition-all duration-200 hover:shadow-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-start gap-4">
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
-                  <DocumentTextIcon className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    📝 View Commit Summaries
-                  </h2>
-                  <p className="text-purple-100 text-sm mb-3">
-                    AI-powered analysis of each team member's contributions
-                  </p>
-                  <div className="flex items-center gap-4 text-white/90 text-sm">
-                    <span className="flex items-center gap-1">
-                      <UserGroupIcon className="h-4 w-4" />
-                      Grouped by contributor
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <CodeBracketIcon className="h-4 w-4" />
-                      All commits summarized
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <ChartBarIcon className="h-4 w-4" />
-                      Detailed insights
-                    </span>
-                  </div>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Contributors</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalContributors}</p>
+                <p className="text-xs text-blue-600 mt-2 flex items-center font-semibold">
+                  <BoltIcon className="h-4 w-4 mr-1" />
+                  Team Members
+                </p>
               </div>
-              <div className="hidden md:flex items-center">
-                <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 group-hover:bg-white/30 transition-colors">
-                  <ArrowTopRightOnSquareIcon className="h-6 w-6 text-white" />
-                </div>
+              <div className="h-16 w-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <UserGroupIcon className="h-8 w-8 text-white" />
               </div>
             </div>
           </div>
-        </Link>
-      </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Side Column */}
-        <div className="lg:col-span-1 space-y-8 order-2 lg:order-1">
-          {/* Most Active Contributors */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-              <h3 className="text-sm font-medium text-gray-900">Top Contributors</h3>
-              <Link to="/contributors" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center">
-                View all
-                <ArrowTrendingUpIcon className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {activeContributors.map(contributor => {
-                const issuesCount = contributor.works.reduce(
-                  (acc, work) => acc + (work.issues?.length || 0), 0
-                );
-                const commitsCount = contributor.works.reduce(
-                  (acc, work) => acc + (work.commits?.length || 0), 0
-                );
-                
-                return (
-                  <Link 
-                    key={contributor.id}
-                    to={`/contributors/${contributor.id}`}
-                    className="flex items-center px-5 py-3 hover:bg-gray-50 transition-colors group"
-                  >
-                    <img 
-                      src={contributor.avatar_url} 
-                      alt={contributor.username}
-                      className="h-8 w-8 rounded-full ring-1 ring-gray-200 object-cover mr-3" 
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
-                        {contributor.username}
-                      </p>
-                      <div className="flex items-center mt-1 space-x-2">
-                        <span className="text-xs text-gray-500 flex items-center">
-                          <CheckCircleIcon className="h-3 w-3 mr-0.5 text-green-500" />
-                          {issuesCount}
-                        </span>
-                        <span className="text-xs text-gray-500 flex items-center">
-                          <CodeBracketIcon className="h-3 w-3 mr-0.5 text-indigo-500" />
-                          {commitsCount}
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                );
-              })}
-              {activeContributors.length === 0 && (
-                <div className="px-5 py-4 text-sm text-gray-500 text-center">
-                  No contributors found
-                </div>
-              )}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transform hover:scale-105 transition-all duration-200 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Commits</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalCommits.toLocaleString()}</p>
+                <p className="text-xs text-purple-600 mt-2 flex items-center font-semibold">
+                  <SparklesIcon className="h-4 w-4 mr-1" />
+                  All Time
+                </p>
+              </div>
+              <div className="h-16 w-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <CodeBracketIcon className="h-8 w-8 text-white" />
+              </div>
             </div>
           </div>
-          
-          {/* Active Repositories */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-              <h3 className="text-sm font-medium text-gray-900">Active Repositories</h3>
-              <Link to="/repositories" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center">
-                View all
-                <ArrowTrendingUpIcon className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {activeRepositories.map(repo => (
-                <Link 
-                  key={repo.id}
-                  to={`/repositories/${repo.id}`}
-                  className="flex flex-col px-5 py-3 hover:bg-gray-50 transition-colors group"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <FolderIcon className="h-4 w-4 text-indigo-500 mr-2 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
-                        {repo.name}
-                      </span>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <div className="flex items-center mt-1.5 ml-6 space-x-3">
-                    <span className="text-xs text-gray-500">
-                      {repo.activityCount} activities
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      Updated {formatDate(repo.lastActivity)}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-              {activeRepositories.length === 0 && (
-                <div className="px-5 py-4 text-sm text-gray-500 text-center">
-                  No repositories found
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Recent Activity Timeline */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-200 bg-gray-50">
-              <h3 className="text-sm font-medium text-gray-900">Recent Activity</h3>
-            </div>
-            <div className="px-5 py-4">
-              <ol className="relative border-l border-gray-200 ml-3 space-y-6">
-                {recentActivity.map((item, idx) => (
-                  <li key={idx} className="ml-6">
-                    <span className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-4 ring-white ${
-                      item.type === 'commit' ? 'bg-indigo-100' : 'bg-green-100'
-                    }`}>
-                      {item.type === 'commit' ? 
-                        <CodeBracketIcon className="w-3 h-3 text-indigo-600" /> : 
-                        <CheckCircleIcon className="w-3 h-3 text-green-600" />
-                      }
-                    </span>
-                    <div className="ml-1">
-                      <div className="flex items-center">
-                        <Link to={`/contributors/${item.contributorId}`} className="flex items-center mr-2">
-                          <img 
-                            src={item.contributorAvatar} 
-                            alt={item.contributor}
-                            className="w-4 h-4 rounded-full mr-1"
-                          />
-                          <span className="text-xs text-gray-600 hover:text-indigo-600 transition-colors">
-                            {item.contributor}
-                          </span>
-                        </Link>
-                        <time className="block text-xs font-normal leading-none text-gray-500">
-                          {formatDate(item.date)}
-                        </time>
-                      </div>
-                      <a 
-                        href={item.url} 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline mt-1"
-                      >
-                        {item.summary.length > 60 ? `${item.summary.substring(0, 60)}...` : item.summary}
-                      </a>
-                      <Link 
-                        to={`/repositories/${item.repositoryId}`}
-                        className="text-xs text-gray-500 hover:text-indigo-600 transition-colors flex items-center mt-1"
-                      >
-                        <FolderIcon className="w-3 h-3 mr-1" />
-                        {item.repository}
-                      </Link>
-                    </div>
-                  </li>
-                ))}
-                {recentActivity.length === 0 && (
-                  <p className="text-sm text-gray-500">No recent activity</p>
-                )}
-              </ol>
+
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transform hover:scale-105 transition-all duration-200 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Issues Resolved</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalIssues.toLocaleString()}</p>
+                <p className="text-xs text-green-600 mt-2 flex items-center font-semibold">
+                  <CheckCircleIcon className="h-4 w-4 mr-1" />
+                  Completed
+                </p>
+              </div>
+              <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <CheckCircleIcon className="h-8 w-8 text-white" />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Main Visualization Area */}
-        <div className={`lg:col-span-3 order-1 lg:order-2 ${graphZoomed ? 'lg:col-span-4' : ''}`}>
-          {/* Graph Container with Controls */}
-          <div className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 ${graphZoomed ? 'h-[800px]' : 'h-[600px]'}`}>
-            <div className="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
-              <div className="flex items-center">
-                <ChartBarSquareIcon className="h-5 w-5 text-indigo-500 mr-2" />
-                <h2 className="text-lg font-medium text-gray-900">Organization Network</h2>
-              </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={refreshGraph}
-                  className="inline-flex items-center text-xs text-gray-600 hover:text-indigo-600 transition-colors"
-                  title="Refresh visualization"
-                >
-                  <ArrowPathIcon className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={toggleSettings}
-                  className={`inline-flex items-center text-xs ${showSettings ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'} transition-colors`}
-                  title="Visualization settings"
-                >
-                  <AdjustmentsHorizontalIcon className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={toggleGraphZoom}
-                  className="inline-flex items-center text-xs text-gray-600 hover:text-indigo-600 transition-colors"
-                  title={graphZoomed ? "Reduce graph size" : "Expand graph"}
-                >
-                  {graphZoomed ? (
-                    <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4.5M9 9H4.5M15 9H19.5M15 9V4.5M15 15H9M15 15v4.5M15 15h4.5M9 15v4.5" />
-                    </svg>
-                  ) : (
-                    <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-            
-            {/* Settings Panel */}
-            {showSettings && (
-              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                <div className="flex flex-wrap gap-4">
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={settings.showLabels}
-                      onChange={() => updateSetting('showLabels', !settings.showLabels)}
-                    />
-                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                    <span className="ml-2 text-xs text-gray-700">Show labels</span>
-                  </label>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={settings.showAllLinks}
-                      onChange={() => updateSetting('showAllLinks', !settings.showAllLinks)}
-                    />
-                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                    <span className="ml-2 text-xs text-gray-700">Show all connections</span>
-                  </label>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={settings.animated}
-                      onChange={() => updateSetting('animated', !settings.animated)}
-                    />
-                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                    <span className="ml-2 text-xs text-gray-700">Animated</span>
-                  </label>
-                  <button
-                    onClick={refreshGraph}
-                    className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-2 py-1 rounded flex items-center"
-                  >
-                    <ArrowPathIcon className="h-3 w-3 mr-1" />
-                    Apply changes
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            {/* Graph Visualization */}
-            <div className="relative h-full">
-              {contributors?.length === 0 || repositories?.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center p-8 text-center">
-                  <ChartBarIcon className="h-12 w-12 text-gray-300 mb-3" />
-                  <h3 className="text-lg font-medium text-gray-800">No data to visualize</h3>
-                  <p className="mt-1 text-gray-500 max-w-md">
-                    Add repositories and contributors to see the organization network visualization.
-                  </p>
-                </div>
-              ) : (
-                <div className="h-full">
-                  <OrganizationGraph 
-                    key={graphKey}
-                    contributors={contributors} 
-                    repositories={repositories} 
-                    showLabels={settings.showLabels}
-                    showAllLinks={settings.showAllLinks}
-                    animated={settings.animated}
-                  />
-                </div>
-              )}
+        {/* Section Title */}
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Explore Features</h2>
+          <p className="text-gray-600">Click on any card to navigate to that section</p>
+        </div>
 
-              {/* Graph Legend */}
-              <div className="absolute top-4 right-4 bg-white bg-opacity-80 p-3 rounded-lg shadow-sm border border-gray-100">
-                <div className="text-xs font-medium text-gray-700 mb-2">Legend</div>
-                <div className="space-y-1.5">
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full bg-indigo-500 mr-2"></div>
-                    <span className="text-xs text-gray-600">Repository</span>
+        {/* Navigation Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {navigationCards.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={index}
+                onClick={() => navigate(card.route)}
+                className="group relative bg-white rounded-2xl shadow-lg border border-gray-100 p-6 cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl overflow-hidden"
+              >
+                {/* Gradient Background on Hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`${card.iconBg} p-3 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className={`h-6 w-6 ${card.iconColor}`} />
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                    <span className="text-xs text-gray-600">Contributor</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-8 h-0.5 bg-gray-300 mr-2"></div>
-                    <span className="text-xs text-gray-600">Connection</span>
+                  
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                    {card.title}
+                  </h3>
+                  
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {card.description}
+                  </p>
+                  
+                  <div className="flex items-center text-xs text-gray-500">
+                    <div className={`h-2 w-2 rounded-full bg-gradient-to-r ${card.gradient} mr-2`}></div>
+                    {card.stats}
                   </div>
                 </div>
               </div>
-            </div>
+            );
+          })}
+        </div>
+
+        {/* Quick Actions Banner */}
+        <div className="mt-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-8 text-center">
+          <h3 className="text-2xl font-bold text-white mb-3">Ready to Get Started?</h3>
+          <p className="text-indigo-100 mb-6 max-w-2xl mx-auto">
+            Import your first repository to unlock powerful analytics and insights about your team's productivity
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <ImportRepository onImportSuccess={() => window.location.reload()} />
+            <Link
+              to="/app/repositories"
+              className="inline-flex items-center px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              <FolderIcon className="h-5 w-5 mr-2" />
+              View Repositories
+            </Link>
           </div>
         </div>
       </div>
