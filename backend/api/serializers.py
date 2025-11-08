@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from .models import Repository, Issue, Commit, RepositoryWork, Contributor, Badge, Collaboration, ActivityLog, User
+from .sprint_models import Sprint, SprintIssue, TeamMemberCapacity, SprintVelocityHistory
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -163,3 +164,53 @@ class DataSerializer(serializers.Serializer):
     # would need to change based on that object's structure.
     # For now, it assumes it will be instantiated without an instance and
     # will fetch all data directly.
+
+
+# ============================================
+# SPRINT PLANNING SERIALIZERS
+# ============================================
+
+class SprintIssueSerializer(serializers.ModelSerializer):
+    assigned_to_name = serializers.CharField(source='assigned_to.username', read_only=True)
+    assigned_to_avatar = serializers.URLField(source='assigned_to.avatar_url', read_only=True)
+    
+    class Meta:
+        model = SprintIssue
+        fields = '__all__'
+
+
+class TeamMemberCapacitySerializer(serializers.ModelSerializer):
+    contributor_name = serializers.CharField(source='contributor.username', read_only=True)
+    contributor_avatar = serializers.URLField(source='contributor.avatar_url', read_only=True)
+    available_hours = serializers.FloatField(read_only=True)
+    remaining_hours = serializers.FloatField(read_only=True)
+    utilization_percentage = serializers.FloatField(read_only=True)
+    
+    class Meta:
+        model = TeamMemberCapacity
+        fields = '__all__'
+
+
+class SprintSerializer(serializers.ModelSerializer):
+    repository_name = serializers.CharField(source='repository.name', read_only=True)
+    team_name = serializers.CharField(source='team.name', read_only=True, allow_null=True)
+    created_by_name = serializers.CharField(source='created_by.username', read_only=True, allow_null=True)
+    duration_days = serializers.IntegerField(read_only=True)
+    completion_rate = serializers.FloatField(read_only=True)
+    velocity_accuracy = serializers.FloatField(read_only=True)
+    sprint_issues = SprintIssueSerializer(many=True, read_only=True)
+    team_capacities = TeamMemberCapacitySerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Sprint
+        fields = '__all__'
+
+
+class SprintVelocityHistorySerializer(serializers.ModelSerializer):
+    repository_name = serializers.CharField(source='repository.name', read_only=True)
+    team_name = serializers.CharField(source='team.name', read_only=True, allow_null=True)
+    sprint_name = serializers.CharField(source='sprint.name', read_only=True)
+    
+    class Meta:
+        model = SprintVelocityHistory
+        fields = '__all__'

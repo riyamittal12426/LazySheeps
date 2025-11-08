@@ -26,9 +26,20 @@ from api.views import (
     commit_analytics, commit_timeline, contributor_commit_summaries,
     register, login, logout, get_profile, update_profile, get_user_stats
 )
+from api.sprint_views import (
+    suggest_sprint_plan, create_sprint, get_sprint, list_sprints,
+    update_sprint, delete_sprint, add_issue_to_sprint, update_sprint_issue,
+    sprint_velocity_trends, team_capacity_analysis, forecast_completion,
+    complete_sprint
+)
 from api.dora_views import repository_dora_metrics, calculate_all_dora_metrics
 from api.webhooks import github_webhook, webhook_health
 from api.github_auth import github_auth_url, github_callback, github_repositories, import_repositories
+from api.release_views import (
+    get_release_readiness, get_release_readiness_score_only, get_release_blockers,
+    get_readiness_trend, compare_repositories_readiness, get_all_repositories_readiness,
+    get_readiness_dashboard
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -102,4 +113,51 @@ urlpatterns = [
     # DORA Metrics
     path('api/repositories/<int:repo_id>/dora/', repository_dora_metrics, name='repository_dora'),
     path('api/dora/calculate-all/', calculate_all_dora_metrics, name='calculate_all_dora'),
+    
+    # ============================================
+    # SPRINT PLANNING AI
+    # ============================================
+    
+    # AI Sprint Suggestion (Main Feature)
+    path('api/sprints/suggest/', suggest_sprint_plan, name='suggest_sprint_plan'),
+    
+    # Sprint CRUD
+    path('api/sprints/', create_sprint, name='create_sprint'),
+    path('api/sprints/list/', list_sprints, name='list_sprints'),
+    path('api/sprints/<int:sprint_id>/', get_sprint, name='get_sprint'),
+    path('api/sprints/<int:sprint_id>/update/', update_sprint, name='update_sprint'),
+    path('api/sprints/<int:sprint_id>/delete/', delete_sprint, name='delete_sprint'),
+    path('api/sprints/<int:sprint_id>/complete/', complete_sprint, name='complete_sprint'),
+    
+    # Sprint Issues
+    path('api/sprints/<int:sprint_id>/issues/', add_issue_to_sprint, name='add_issue_to_sprint'),
+    path('api/sprints/<int:sprint_id>/issues/<int:issue_id>/', update_sprint_issue, name='update_sprint_issue'),
+    
+    # Sprint Analytics
+    path('api/sprints/velocity/<int:repository_id>/', sprint_velocity_trends, name='sprint_velocity_trends'),
+    path('api/sprints/capacity/', team_capacity_analysis, name='team_capacity_analysis'),
+    path('api/sprints/forecast/<int:repository_id>/', forecast_completion, name='forecast_completion'),
+    
+    # ============================================
+    # RELEASE READINESS SCORE
+    # ============================================
+    
+    # Full Release Readiness Report
+    path('api/release-readiness/<int:repo_id>/', get_release_readiness, name='get_release_readiness'),
+    
+    # Lightweight Score Only
+    path('api/release-readiness/<int:repo_id>/score/', get_release_readiness_score_only, name='get_readiness_score_only'),
+    
+    # Blockers & Warnings
+    path('api/release-readiness/<int:repo_id>/blockers/', get_release_blockers, name='get_release_blockers'),
+    
+    # Trend Analysis
+    path('api/release-readiness/<int:repo_id>/trend/', get_readiness_trend, name='get_readiness_trend'),
+    
+    # Dashboard View
+    path('api/release-readiness/<int:repo_id>/dashboard/', get_readiness_dashboard, name='get_readiness_dashboard'),
+    
+    # Multi-Repository Views
+    path('api/release-readiness/all/', get_all_repositories_readiness, name='get_all_repositories_readiness'),
+    path('api/release-readiness/compare/', compare_repositories_readiness, name='compare_repositories_readiness'),
 ]
