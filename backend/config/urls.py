@@ -29,6 +29,11 @@ from api.views import (
 from api.dora_views import repository_dora_metrics, calculate_all_dora_metrics
 from api.webhooks import github_webhook, webhook_health
 from api.github_auth import github_auth_url, github_callback, github_repositories, import_repositories
+from api.triage_chatbot_views import (
+    auto_triage_issue, classify_issue, detect_duplicate_issue, suggest_assignee,
+    chatbot_command, pr_summary, team_health, daily_digest, risk_alerts,
+    slack_webhook, discord_webhook
+)
 from api.github_app import (
     github_app_manifest, github_app_install_url, github_app_callback,
     list_installations, installation_repositories, bulk_import_repositories,
@@ -113,6 +118,21 @@ urlpatterns = [
     # GitHub Webhooks
     path('api/webhooks/github/', github_webhook, name='github_webhook'),
     path('api/webhooks/health/', webhook_health, name='webhook_health'),
+    path('api/webhooks/slack/', slack_webhook, name='slack_webhook'),
+    path('api/webhooks/discord/', discord_webhook, name='discord_webhook'),
+    
+    # Auto-Triage & Issue Management
+    path('api/triage/issue/', auto_triage_issue, name='auto_triage_issue'),
+    path('api/triage/classify/', classify_issue, name='classify_issue'),
+    path('api/triage/detect-duplicate/', detect_duplicate_issue, name='detect_duplicate_issue'),
+    path('api/triage/suggest-assignee/<int:repository_id>/', suggest_assignee, name='suggest_assignee'),
+    
+    # ChatBot (Slack/Discord)
+    path('api/chatbot/command/', chatbot_command, name='chatbot_command'),
+    path('api/chatbot/pr-summary/', pr_summary, name='pr_summary'),
+    path('api/chatbot/team-health/', team_health, name='team_health'),
+    path('api/chatbot/daily-digest/', daily_digest, name='daily_digest'),
+    path('api/chatbot/risk-alerts/', risk_alerts, name='risk_alerts'),
     
     # DORA Metrics
     path('api/repositories/<int:repo_id>/dora/', repository_dora_metrics, name='repository_dora'),
