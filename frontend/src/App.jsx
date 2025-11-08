@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 // import { SignIn, SignUp, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import Layout from './components/Layout';
+import LandingPage from './pages/LandingPage';
+import PricingPage from './pages/PricingPage';
 import Dashboard from './pages/Dashboard';
 import EnhancedDashboard from './pages/EnhancedDashboard';
 import Repositories from './pages/Repositories';
@@ -30,6 +32,12 @@ function AppRoutes() {
   return (
     <ReactFlowProvider>
       <Routes>
+        {/* Landing Page */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Marketing Pages */}
+        <Route path="/pricing" element={<PricingPage />} />
+        
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -45,10 +53,10 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
         
-        {/* All Routes - No Protection */}
-        <Route path="/" element={<Layout />}>
-          {/* Redirect root to dashboard */}
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        {/* App Routes with Layout */}
+        <Route path="/app" element={<Layout />}>
+          {/* Redirect /app to dashboard */}
+          <Route index element={<Navigate to="/app/dashboard" replace />} />
           
           {/* Dashboard Routes */}
           <Route path="dashboard" element={<Dashboard />} />
