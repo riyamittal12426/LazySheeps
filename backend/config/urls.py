@@ -22,7 +22,7 @@ from api.views import (
     repository_health, predict_completion,
     collaboration_network, collaboration_patterns,
     dashboard_stats, activity_trends, search_contributors,
-    import_github_repository, import_status, sync_repository,
+    import_github_repository, import_status, sync_repository, delete_repository,
     commit_analytics, commit_timeline, contributor_commit_summaries,
     register, login, logout, get_profile, update_profile, get_user_stats
 )
@@ -34,6 +34,11 @@ from api.github_app import (
     list_installations, installation_repositories, bulk_import_repositories,
     github_app_webhook, delete_installation
 )
+from api.webhook_views import (
+    github_webhook_handler, trigger_periodic_sync, sync_repository_endpoint,
+    sync_jobs_list, webhook_health_check
+)
+from api.team_health import team_health_radar, contributor_health_detail
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -104,17 +109,29 @@ urlpatterns = [
     path('api/repositories/import/', import_github_repository, name='import_github_repository'),
     path('api/repositories/import-status/', import_status, name='import_status'),
     path('api/repositories/<int:repo_id>/sync/', sync_repository, name='sync_repository'),
+    path('api/repositories/<int:repo_id>/delete/', delete_repository, name='delete_repository'),
     
     # Commit Analytics
     path('api/commits/analytics/', commit_analytics, name='commit_analytics'),
     path('api/commits/timeline/', commit_timeline, name='commit_timeline'),
     path('api/commits/contributor-summaries/', contributor_commit_summaries, name='contributor_commit_summaries'),
     
-    # GitHub Webhooks
+    # GitHub Webhooks (Old - kept for backward compatibility)
     path('api/webhooks/github/', github_webhook, name='github_webhook'),
     path('api/webhooks/health/', webhook_health, name='webhook_health'),
+    
+    # GitHub Auto-Sync System (New Enterprise-Grade)
+    path('api/github/webhook/', github_webhook_handler, name='github_webhook_handler'),
+    path('api/sync/periodic/', trigger_periodic_sync, name='trigger_periodic_sync'),
+    path('api/sync/repository/<int:repo_id>/', sync_repository_endpoint, name='sync_repository_endpoint'),
+    path('api/sync/jobs/', sync_jobs_list, name='sync_jobs_list'),
+    path('api/sync/health/', webhook_health_check, name='webhook_health_check'),
     
     # DORA Metrics
     path('api/repositories/<int:repo_id>/dora/', repository_dora_metrics, name='repository_dora'),
     path('api/dora/calculate-all/', calculate_all_dora_metrics, name='calculate_all_dora'),
+    
+    # Team Health Radar
+    path('api/team-health/', team_health_radar, name='team_health_radar'),
+    path('api/team-health/<int:contributor_id>/', contributor_health_detail, name='contributor_health_detail'),
 ]

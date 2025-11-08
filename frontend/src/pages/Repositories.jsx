@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import ImportRepository from '../components/ImportRepository';
+import axios from 'axios';
 import { 
   FolderIcon,
   CalendarIcon,
   MagnifyingGlassIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 import { 
   UserGroupIcon,
@@ -26,14 +28,43 @@ const formatDate = (dateString) => {
 };
 
 export default function Repositories() {
-  const { repositories, contributors, isLoading, error } = useData();
+  const { repositories, contributors, isLoading, error, refreshData } = useData();
   const [searchQuery, setSearchQuery] = useState('');
+  const [deletingRepo, setDeletingRepo] = useState(null);
   
   // Filter repositories based on search query
   const filteredRepositories = repositories.filter(repo => 
     repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     repo.summary.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Handle repository deletion
+  const handleDeleteRepository = async (repo, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!window.confirm(`Are you sure you want to delete "${repo.name}"? This action cannot be undone and will remove all associated data (commits, issues, contributors).`)) {
+      return;
+    }
+    
+    setDeletingRepo(repo.id);
+    
+    try {
+      await axios.delete(`http://localhost:8000/api/repositories/${repo.id}/delete/`);
+      alert(`Repository "${repo.name}" deleted successfully!`);
+      // Refresh the data to update the UI
+      if (refreshData) {
+        refreshData();
+      } else {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error deleting repository:', error);
+      alert(`Failed to delete repository: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setDeletingRepo(null);
+    }
+  };
 
   // Helper function to get contributor count for a repository
   const getContributorCount = (repoId) => {
@@ -180,7 +211,15 @@ export default function Repositories() {
                       <FolderIcon className="h-5 w-5 text-indigo-500 mr-2 flex-shrink-0" />
                       <span>{repo.name}</span>
                     </h3>
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => handleDeleteRepository(repo, e)}
+                        disabled={deletingRepo === repo.id}
+                        className="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        title="Delete repository"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
                       <ArrowTopRightOnSquareIcon className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
