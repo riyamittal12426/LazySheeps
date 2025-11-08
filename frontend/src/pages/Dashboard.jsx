@@ -37,6 +37,7 @@ const formatDate = (dateString) => {
 
 export default function Dashboard() {
   const { isLoading, error, contributors, repositories } = useData();
+  const { user } = useUser(); // ✅ Call useUser at the top level
   const [showSettings, setShowSettings] = useState(false);
   const [activeRepositories, setActiveRepositories] = useState([]);
   const [activeContributors, setActiveContributors] = useState([]);
@@ -228,7 +229,7 @@ export default function Dashboard() {
             <div className="flex items-center">
               <PresentationChartBarIcon className="h-8 w-8 text-white mr-4" />
               <div>
-                <h1 className="text-2xl font-bold text-white">Hi {useUser()?.name || 'there'},</h1>
+                <h1 className="text-2xl font-bold text-white">Hi {user?.firstName || user?.username || 'there'},</h1>
                 <p className="text-indigo-100 mt-1">
                   Here's all you need to know about the Llama team.
                 </p>
