@@ -42,6 +42,12 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
+        {/* Redirect old routes to new /app prefix */}
+        <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+        <Route path="/repositories/*" element={<Navigate to="/app/repositories" replace />} />
+        <Route path="/contributors/*" element={<Navigate to="/app/contributors" replace />} />
+        
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />
         <Route path="/auth/github-app/callback" element={<GitHubAppCallback />} />
