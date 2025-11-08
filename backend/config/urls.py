@@ -24,7 +24,8 @@ from api.views import (
     dashboard_stats, activity_trends, search_contributors,
     import_github_repository, import_status, sync_repository, delete_repository,
     commit_analytics, commit_timeline, contributor_commit_summaries,
-    register, login, logout, get_profile, update_profile, get_user_stats
+    register, login, logout, get_profile, update_profile, get_user_stats,
+    event_stream, webhook_logs
 )
 from api.dora_views import repository_dora_metrics, calculate_all_dora_metrics
 from api.webhooks import github_webhook, webhook_health
@@ -154,4 +155,10 @@ urlpatterns = [
     # Team Health Radar
     path('api/team-health/', team_health_radar, name='team_health_radar'),
     path('api/team-health/<int:contributor_id>/', contributor_health_detail, name='contributor_health_detail'),
+    
+    # Server-Sent Events (Live Activity Feed)
+    path('api/events/stream/', event_stream, name='event_stream'),
+    
+    # Webhook Logs (for debugging/monitoring)
+    path('api/webhooks/logs/', webhook_logs, name='webhook_logs'),
 ]

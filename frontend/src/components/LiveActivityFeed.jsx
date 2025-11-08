@@ -32,8 +32,9 @@ export default function LiveActivityFeed() {
         };
         
         eventSource.onerror = (err) => {
-            console.error('❌ SSE connection error:', err);
+            // Silently fail if endpoint doesn't exist (feature not yet implemented)
             setConnected(false);
+            eventSource.close();
         };
         
         // Request notification permission
@@ -43,7 +44,6 @@ export default function LiveActivityFeed() {
         
         // Cleanup on unmount
         return () => {
-            console.log('🔌 Disconnecting from event stream');
             eventSource.close();
         };
     }, []);

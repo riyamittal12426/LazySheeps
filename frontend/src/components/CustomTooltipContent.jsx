@@ -41,7 +41,7 @@ const CustomTooltipContent = ({ content }) => {
               </div>
             </div>
             {content.summary && ( // Show summary only if available
-               <p className="text-sm mt-2 break-words prose"><ReactMarkdown>{truncatedSummary}</ReactMarkdown></p>
+               <div className="text-sm mt-2 break-words prose"><ReactMarkdown>{truncatedSummary}</ReactMarkdown></div>
             )}
           </>
         )}

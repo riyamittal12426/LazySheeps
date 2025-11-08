@@ -62,10 +62,20 @@ const ImportRepository = ({ onImportSuccess }) => {
       }
     } catch (err) {
       console.error('Import error:', err);
-      setError(
-        err.response?.data?.error || 
-        'Failed to import repository. Please check the URL and try again.'
-      );
+      console.error('Error response:', err.response);
+      console.error('Error data:', err.response?.data);
+      
+      let errorMessage = 'Failed to import repository. Please check the URL and try again.';
+      
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.response?.status === 0) {
+        errorMessage = 'Cannot connect to server. Make sure Django backend is running on http://localhost:8000';
+      } else if (err.response?.status) {
+        errorMessage = `Server error (${err.response.status}): ${err.message}`;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsImporting(false);
     }

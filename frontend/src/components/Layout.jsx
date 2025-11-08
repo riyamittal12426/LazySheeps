@@ -20,6 +20,7 @@ import {
     HeartIcon,
     ExclamationTriangleIcon,
     ChatBubbleBottomCenterTextIcon,
+    ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import LlamaChat from './LlamaChat';
 
@@ -32,6 +33,7 @@ const appNavigation = [
     { name: 'Contributors', to: '/contributors', icon: UsersIcon },
     { name: 'Auto-Triage', to: '/auto-triage', icon: ExclamationTriangleIcon },
     { name: 'ChatBot', to: '/chatbot', icon: ChatBubbleBottomCenterTextIcon },
+    { name: 'Live Sync', to: '/live-sync', icon: ArrowPathIcon },
 ];
 
 // Placeholder teams data

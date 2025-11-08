@@ -308,9 +308,17 @@ def github_app_callback(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def list_installations(request):
     """List all GitHub App installations for the current user"""
+    # Return empty list if not authenticated
+    if not request.user.is_authenticated:
+        return Response({
+            'installations': [],
+            'count': 0,
+            'message': 'Please log in to view GitHub App installations'
+        })
+    
     installations = GitHubAppInstallation.objects.filter(user=request.user)
     
     data = []

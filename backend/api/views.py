@@ -1,6 +1,7 @@
 import os
 import time # Optional: for slight delay if needed during testing
 from django.http import StreamingHttpResponse, JsonResponse, HttpResponseBadRequest
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import google.generativeai as genai
 from django.conf import settings
 from django.db.models import Q, Count, Avg, Sum
+from django.core.cache import cache
 from .models import *
 from .serializers import (
     DataSerializer, UserSerializer, RegisterSerializer, 
@@ -1048,3 +1050,49 @@ def commit_timeline(request):
         'total_commits': sum(len(commits) for commits in timeline.values()),
         'days': days
     })
+
+
+# --- Server-Sent Events (SSE) Stream ---
+
+@permission_classes([AllowAny])
+def event_stream(request):
+    """
+    Server-Sent Events stream for live activity feed
+    TODO: Implement actual event streaming when backend processing is ready
+    """
+    def event_generator():
+        # Keep connection alive with periodic heartbeat
+        while True:
+            yield f"data: {{'type': 'heartbeat', 'timestamp': '{timezone.now().isoformat()}'}}\n\n"
+            time.sleep(30)  # Send heartbeat every 30 seconds
+    
+    response = StreamingHttpResponse(
+        event_generator(),
+        content_type='text/event-stream'
+    )
+    response['Cache-Control'] = 'no-cache'
+    response['X-Accel-Buffering'] = 'no'
+    return response
+
+
+# --- Webhook Logs ---
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def webhook_logs(request):
+    """
+    Get recent webhook processing logs for debugging/monitoring
+    """
+    try:
+        # Get recent webhook logs from cache
+        logs = cache.get("recent_webhook_logs", [])
+        
+        return Response({
+            "status": "success",
+            "total_logs": len(logs),
+            "logs": logs[-50:],  # Last 50 logs
+            "timestamp": timezone.now().isoformat()
+        })
+        
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

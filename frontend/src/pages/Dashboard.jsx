@@ -42,6 +42,7 @@ export default function Dashboard() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [graphKey, setGraphKey] = useState(Date.now());
   const [graphZoomed, setGraphZoomed] = useState(false);
+  const [webhookLogs, setWebhookLogs] = useState([]);
 
   // Settings for graph display
   const [settings, setSettings] = useState({
@@ -85,6 +86,16 @@ export default function Dashboard() {
       });
       
       setActiveRepositories(sortedRepos.slice(0, 3));
+      
+      // Fetch webhook logs
+      fetch('http://localhost:8000/api/webhooks/logs/')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            setWebhookLogs(data.logs || []);
+          }
+        })
+        .catch(error => console.error('Error fetching webhook logs:', error));
       
       // Find most active contributors based on combined commits and issues
       const contributorActivity = contributors.map(contributor => {
@@ -309,6 +320,41 @@ export default function Dashboard() {
       <div className="mb-8">
         <LiveActivityFeed />
       </div>
+
+      {/* Webhook Logs (for debugging) - Only show if there are logs */}
+      {webhookLogs.length > 0 && (
+        <div className="mb-8">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-900">Recent Webhook Events</h3>
+                <span className="text-xs text-gray-500">Last 5 events</span>
+              </div>
+            </div>
+            <div className="px-5 py-4">
+              <div className="space-y-3">
+                {webhookLogs.slice(0, 5).map((log, idx) => (
+                  <div key={idx} className="flex items-start space-x-3 text-xs p-3 bg-gray-50 rounded-lg">
+                    <span className={`flex-shrink-0 px-2 py-1 rounded-full font-medium ${
+                      log.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {log.event || 'webhook'}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 font-medium truncate">
+                        {log.repository || log.message || 'Event processed'}
+                      </p>
+                      <p className="text-gray-500 mt-1">
+                        {log.timestamp ? formatDate(new Date(log.timestamp)) : 'Just now'}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* GitHub App Integration - ONE-CLICK ORG IMPORT */}
       <div className="mb-8">

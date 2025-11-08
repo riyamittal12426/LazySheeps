@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  Users, AlertTriangle, TrendingUp, TrendingDown, 
-  Clock, Code, GitBranch, Activity, Heart,
-  CheckCircle, AlertCircle, XCircle, Zap, Target
-} from 'lucide-react';
+  UsersIcon,
+  ExclamationTriangleIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
+  ClockIcon,
+  CodeBracketIcon,
+  CommandLineIcon,
+  ChartBarIcon,
+  HeartIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  XCircleIcon,
+  BoltIcon,
+  PresentationChartLineIcon
+} from '@heroicons/react/24/outline';
 import './TeamHealthRadar.css';
 
 const TeamHealthRadar = () => {
@@ -42,9 +53,9 @@ const TeamHealthRadar = () => {
   };
 
   const getStatusIcon = (status) => {
-    if (status === 'green') return <CheckCircle className="status-icon green" />;
-    if (status === 'yellow') return <AlertCircle className="status-icon yellow" />;
-    return <XCircle className="status-icon red" />;
+    if (status === 'green') return <CheckCircleIcon className="status-icon green w-5 h-5" />;
+    if (status === 'yellow') return <ExclamationCircleIcon className="status-icon yellow w-5 h-5" />;
+    return <XCircleIcon className="status-icon red w-5 h-5" />;
   };
 
   const getHealthGradeColor = (grade) => {
@@ -100,7 +111,7 @@ const TeamHealthRadar = () => {
 
         <div className="member-metrics">
           <div className="metric-row">
-            <Activity size={14} />
+            <ChartBarIcon className="w-3.5 h-3.5" />
             <span>Workload</span>
             <div className={`metric-bar metric-${metrics.workload.status}`}>
               <div 
@@ -112,7 +123,7 @@ const TeamHealthRadar = () => {
           </div>
 
           <div className="metric-row">
-            <Heart size={14} />
+            <HeartIcon className="w-3.5 h-3.5" />
             <span>Burnout</span>
             <div className={`metric-bar metric-${metrics.burnout_risk.status}`}>
               <div 
@@ -124,7 +135,7 @@ const TeamHealthRadar = () => {
           </div>
 
           <div className="metric-row">
-            <Clock size={14} />
+            <ClockIcon className="w-3.5 h-3.5" />
             <span>Review Latency</span>
             <div className={`metric-bar metric-${metrics.review_latency.status}`}>
               <div 
@@ -136,7 +147,7 @@ const TeamHealthRadar = () => {
           </div>
 
           <div className="metric-row">
-            <Code size={14} />
+            <CodeBracketIcon className="w-3.5 h-3.5" />
             <span>Code Churn</span>
             <div className={`metric-bar metric-${metrics.code_churn.status}`}>
               <div 
@@ -214,8 +225,8 @@ const TeamHealthRadar = () => {
         style={{ borderLeftColor: priorityColors[recommendation.priority] }}
       >
         <div className="recommendation-header">
-          <AlertTriangle 
-            size={20} 
+          <ExclamationTriangleIcon 
+            className="w-5 h-5" 
             style={{ color: priorityColors[recommendation.priority] }}
           />
           <span className="recommendation-category">{recommendation.category}</span>
@@ -239,7 +250,7 @@ const TeamHealthRadar = () => {
     return (
       <div className="team-health-container">
         <div className="loading-spinner">
-          <Activity className="spinner-icon" />
+          <ChartBarIcon className="spinner-icon w-12 h-12 animate-spin" />
           <p>Analyzing team health...</p>
         </div>
       </div>
@@ -250,7 +261,7 @@ const TeamHealthRadar = () => {
     return (
       <div className="team-health-container">
         <div className="error-message">
-          <AlertTriangle size={48} />
+          <ExclamationTriangleIcon className="w-12 h-12" />
           <p>{error}</p>
           <button onClick={fetchTeamHealth} className="retry-button">
             Try Again
@@ -264,7 +275,7 @@ const TeamHealthRadar = () => {
     <div className="team-health-container">
       <div className="team-health-header">
         <div className="header-title">
-          <Target size={32} className="header-icon" />
+          <PresentationChartLineIcon className="header-icon w-8 h-8" />
           <h1>Team Health Radar</h1>
         </div>
         <div className="header-actions">
@@ -272,18 +283,18 @@ const TeamHealthRadar = () => {
             className={`view-toggle ${view === 'overview' ? 'active' : ''}`}
             onClick={() => setView('overview')}
           >
-            <Users size={18} />
+            <UsersIcon className="w-4.5 h-4.5" />
             Overview
           </button>
           <button 
             className={`view-toggle ${view === 'heatmap' ? 'active' : ''}`}
             onClick={() => setView('heatmap')}
           >
-            <GitBranch size={18} />
+            <CommandLineIcon className="w-4.5 h-4.5" />
             Heatmap
           </button>
           <button onClick={fetchTeamHealth} className="refresh-button">
-            <Zap size={18} />
+            <BoltIcon className="w-4.5 h-4.5" />
             Refresh
           </button>
         </div>
@@ -292,35 +303,35 @@ const TeamHealthRadar = () => {
       {/* Overall Team Stats */}
       <div className="team-stats-grid">
         <MetricCard
-          icon={Users}
+          icon={UsersIcon}
           title="Team Members"
           value={teamData.overall_stats.total_members}
           status="green"
           detail="Total contributors"
         />
         <MetricCard
-          icon={AlertCircle}
+          icon={ExclamationCircleIcon}
           title="At Risk"
           value={teamData.overall_stats.at_risk_count}
           status={teamData.overall_stats.at_risk_count > 0 ? 'red' : 'green'}
           detail="Need immediate attention"
         />
         <MetricCard
-          icon={AlertTriangle}
+          icon={ExclamationTriangleIcon}
           title="Warning"
           value={teamData.overall_stats.warning_count}
           status={teamData.overall_stats.warning_count > 0 ? 'yellow' : 'green'}
           detail="Monitor closely"
         />
         <MetricCard
-          icon={CheckCircle}
+          icon={CheckCircleIcon}
           title="Healthy"
           value={teamData.overall_stats.healthy_count}
           status="green"
           detail="Performing well"
         />
         <MetricCard
-          icon={Activity}
+          icon={ChartBarIcon}
           title="Avg Workload"
           value={`${teamData.overall_stats.avg_workload}%`}
           status={
@@ -330,7 +341,7 @@ const TeamHealthRadar = () => {
           detail="Team average"
         />
         <MetricCard
-          icon={Heart}
+          icon={HeartIcon}
           title="Avg Burnout Risk"
           value={`${teamData.overall_stats.avg_burnout_risk}%`}
           status={
@@ -345,7 +356,7 @@ const TeamHealthRadar = () => {
       {teamData.team_recommendations && teamData.team_recommendations.length > 0 && (
         <div className="recommendations-section">
           <h2>
-            <AlertTriangle size={24} />
+            <ExclamationTriangleIcon className="w-6 h-6" />
             Actionable Recommendations
           </h2>
           <div className="recommendations-grid">
@@ -360,7 +371,7 @@ const TeamHealthRadar = () => {
       {view === 'heatmap' ? (
         <div className="heatmap-section">
           <h2>
-            <GitBranch size={24} />
+            <CommandLineIcon className="w-6 h-6" />
             Team Health Heatmap
           </h2>
           <TeamHeatmap teamHealth={teamData.team_health} />
@@ -382,7 +393,7 @@ const TeamHealthRadar = () => {
       ) : (
         <div className="team-members-section">
           <h2>
-            <Users size={24} />
+            <UsersIcon className="w-6 h-6" />
             Team Members ({teamData.team_health.length})
           </h2>
           <div className="team-members-grid">
@@ -419,7 +430,7 @@ const TeamHealthRadar = () => {
 
             <div className="modal-metrics">
               <div className="modal-metric">
-                <Activity size={20} />
+                <ChartBarIcon className="w-5 h-5" />
                 <div className="modal-metric-info">
                   <strong>Workload</strong>
                   <div className="modal-metric-bar">
@@ -436,7 +447,7 @@ const TeamHealthRadar = () => {
               </div>
 
               <div className="modal-metric">
-                <Heart size={20} />
+                <HeartIcon className="w-5 h-5" />
                 <div className="modal-metric-info">
                   <strong>Burnout Risk</strong>
                   <div className="modal-metric-bar">
@@ -455,7 +466,7 @@ const TeamHealthRadar = () => {
               </div>
 
               <div className="modal-metric">
-                <Clock size={20} />
+                <ClockIcon className="w-5 h-5" />
                 <div className="modal-metric-info">
                   <strong>Review Latency</strong>
                   <div className="modal-metric-bar">
@@ -473,7 +484,7 @@ const TeamHealthRadar = () => {
               </div>
 
               <div className="modal-metric">
-                <Code size={20} />
+                <CodeBracketIcon className="w-5 h-5" />
                 <div className="modal-metric-info">
                   <strong>Code Churn</strong>
                   <div className="modal-metric-bar">
@@ -492,7 +503,7 @@ const TeamHealthRadar = () => {
               </div>
 
               <div className="modal-metric">
-                <GitBranch size={20} />
+                <CommandLineIcon className="w-5 h-5" />
                 <div className="modal-metric-info">
                   <strong>Collaboration</strong>
                   <div className="modal-metric-bar">
