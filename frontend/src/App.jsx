@@ -13,6 +13,8 @@ import UserProfile from './pages/UserProfile';
 import GitHubCallback from './pages/GitHubCallback';
 import GitHubAppCallback from './pages/GitHubAppCallback';
 import RepositorySelection from './pages/RepositorySelection';
+import AutoTriage from './components/AutoTriage';
+import ChatBot from './components/ChatBot';
 import { ReactFlowProvider } from '@xyflow/react';
 
 // AUTHENTICATION DISABLED - All routes are now accessible
@@ -66,6 +68,10 @@ function AppRoutes() {
             <Route path=":contributorId" element={<ContributorDetail />} />
             <Route path=":contributorId/stats" element={<ContributorStats />} />
           </Route>
+
+          {/* Auto-Triage & ChatBot Routes */}
+          <Route path="auto-triage" element={<AutoTriage />} />
+          <Route path="chatbot" element={<ChatBot />} />
 
           {/* 404 Not Found Route */}
           <Route path="*" element={
