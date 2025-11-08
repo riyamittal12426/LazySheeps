@@ -21,44 +21,103 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def auto_triage_issue(request):
     """
-    Auto-triage a new issue
+    Auto-triage a new issue - repository_id is now OPTIONAL!
     
     POST /api/triage/issue/
-    Body:
+    
+    Option 1 - Auto-detect repository from GitHub data:
     {
-        "repository_id": 1,
         "issue_data": {
             "title": "Bug in login form",
             "body": "User cannot login...",
-            "labels": ["bug"],
+            "repository_url": "https://github.com/owner/repo",  # Auto-detect from this
             "number": 123
         }
     }
+    
+    Option 2 - Specify repository_id explicitly:
+    {
+        "repository_id": 1,
+        "issue_data": {...}
+    }
+    
+    Option 3 - Use repository full_name:
+    {
+        "repository": "owner/repo",
+        "issue_data": {...}
+    }
     """
     try:
-        repository_id = request.data.get('repository_id')
-        issue_data = request.data.get('issue_data')
+        issue_data = request.data.get('issue_data', request.data)
         
-        if not repository_id or not issue_data:
+        if not issue_data:
             return Response(
-                {'error': 'repository_id and issue_data are required'},
+                {'error': 'issue_data is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Get repository
-        try:
-            repository = Repository.objects.get(id=repository_id)
-        except Repository.DoesNotExist:
-            return Response(
-                {'error': 'Repository not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        # Try to find repository using multiple methods
+        repository = None
+        
+        # Method 1: Explicit repository_id
+        repository_id = request.data.get('repository_id')
+        if repository_id:
+            try:
+                repository = Repository.objects.get(id=repository_id)
+            except Repository.DoesNotExist:
+                return Response(
+                    {'error': f'Repository with id {repository_id} not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        # Method 2: Repository full_name (e.g., "owner/repo")
+        if not repository:
+            repo_name = request.data.get('repository')
+            if repo_name:
+                repository = Repository.objects.filter(full_name=repo_name).first()
+        
+        # Method 3: Extract from repository_url in issue_data
+        if not repository:
+            repo_url = issue_data.get('repository_url') or issue_data.get('html_url', '')
+            if repo_url:
+                # Extract owner/repo from URL like https://github.com/owner/repo/issues/123
+                import re
+                match = re.search(r'github\.com/([^/]+/[^/]+)', repo_url)
+                if match:
+                    full_name = match.group(1)
+                    repository = Repository.objects.filter(full_name=full_name).first()
+        
+        # Method 4: Use first available repository (if only one exists)
+        if not repository:
+            repos = Repository.objects.all()
+            if repos.count() == 1:
+                repository = repos.first()
+                logger.info(f"Auto-selected single repository: {repository.full_name}")
+            elif repos.count() > 1:
+                return Response(
+                    {
+                        'error': 'Multiple repositories found. Please specify repository_id, repository name, or repository_url',
+                        'available_repositories': [
+                            {'id': r.id, 'name': r.full_name} for r in repos
+                        ]
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    {'error': 'No repositories found. Please import a repository first.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         
         # Perform triage
         triage_result = triage_service.triage_issue(issue_data, repository)
         
         return Response({
             'success': True,
+            'repository': {
+                'id': repository.id,
+                'name': repository.full_name
+            },
             'triage_result': triage_result
         })
         
@@ -106,10 +165,17 @@ def classify_issue(request):
 @permission_classes([AllowAny])
 def detect_duplicate_issue(request):
     """
-    Detect duplicate issues
+    Detect duplicate issues - repository_id is now OPTIONAL!
     
     POST /api/triage/detect-duplicate/
-    Body:
+    
+    Minimal body (auto-detects repository):
+    {
+        "title": "Login broken",
+        "body": "Cannot login to app"
+    }
+    
+    Or specify repository explicitly:
     {
         "repository_id": 1,
         "title": "Login broken",
@@ -117,30 +183,52 @@ def detect_duplicate_issue(request):
     }
     """
     try:
-        repository_id = request.data.get('repository_id')
         issue_data = {
             'title': request.data.get('title', ''),
             'body': request.data.get('body', '')
         }
         
-        if not repository_id:
-            return Response(
-                {'error': 'repository_id is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Try to find repository using multiple methods
+        repository = None
+        repository_id = request.data.get('repository_id')
         
-        try:
-            repository = Repository.objects.get(id=repository_id)
-        except Repository.DoesNotExist:
-            return Response(
-                {'error': 'Repository not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        if repository_id:
+            try:
+                repository = Repository.objects.get(id=repository_id)
+            except Repository.DoesNotExist:
+                return Response(
+                    {'error': f'Repository with id {repository_id} not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            # Auto-detect: use first repository if only one exists
+            repos = Repository.objects.all()
+            if repos.count() == 1:
+                repository = repos.first()
+            elif repos.count() > 1:
+                return Response(
+                    {
+                        'error': 'Multiple repositories found. Please specify repository_id',
+                        'available_repositories': [
+                            {'id': r.id, 'name': r.full_name} for r in repos
+                        ]
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    {'error': 'No repositories found. Please import a repository first.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         
         is_duplicate, duplicate_id = triage_service.detect_duplicates(issue_data, repository)
         
         return Response({
             'success': True,
+            'repository': {
+                'id': repository.id,
+                'name': repository.full_name
+            },
             'is_duplicate': is_duplicate,
             'duplicate_of': duplicate_id
         })
@@ -153,30 +241,72 @@ def detect_duplicate_issue(request):
         )
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
-def suggest_assignee(request, repository_id):
+def suggest_assignee(request, repository_id=None):
     """
-    Suggest assignee for an issue
+    Suggest assignee for an issue - repository_id is now OPTIONAL!
     
-    GET /api/triage/suggest-assignee/<repository_id>/?component=frontend
+    GET /api/triage/suggest-assignee/?component=frontend
+    GET /api/triage/suggest-assignee/<repository_id>/?component=frontend  (legacy)
+    
+    POST /api/triage/suggest-assignee/
+    {
+        "component": "frontend",
+        "repository_id": 1  (optional)
+    }
     """
     try:
-        component = request.GET.get('component', 'backend')
+        # Get component from query params or POST body
+        if request.method == 'POST':
+            component = request.data.get('component', 'backend')
+            if not repository_id:
+                repository_id = request.data.get('repository_id')
+        else:
+            component = request.GET.get('component', 'backend')
         
-        try:
-            repository = Repository.objects.get(id=repository_id)
-        except Repository.DoesNotExist:
-            return Response(
-                {'error': 'Repository not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        # Try to find repository
+        repository = None
+        
+        if repository_id:
+            try:
+                repository = Repository.objects.get(id=repository_id)
+            except Repository.DoesNotExist:
+                return Response(
+                    {'error': f'Repository with id {repository_id} not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            # Auto-detect: use first repository if only one exists
+            repos = Repository.objects.all()
+            if repos.count() == 1:
+                repository = repos.first()
+            elif repos.count() > 1:
+                return Response(
+                    {
+                        'error': 'Multiple repositories found. Please specify repository_id',
+                        'available_repositories': [
+                            {'id': r.id, 'name': r.full_name} for r in repos
+                        ]
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    {'error': 'No repositories found. Please import a repository first.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         
         issue_data = {'title': '', 'body': ''}  # Minimal data
         assignee_info = triage_service.suggest_assignee(issue_data, repository, component)
         
         return Response({
             'success': True,
+            'repository': {
+                'id': repository.id,
+                'name': repository.full_name
+            },
+            'component': component,
             'assignee': assignee_info
         })
         

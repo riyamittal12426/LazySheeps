@@ -128,11 +128,12 @@ urlpatterns = [
     path('api/webhooks/slack/', slack_webhook, name='slack_webhook'),
     path('api/webhooks/discord/', discord_webhook, name='discord_webhook'),
     
-    # Auto-Triage & Issue Management
+    # Auto-Triage & Issue Management (repository_id is optional - auto-detects if only one repo)
     path('api/triage/issue/', auto_triage_issue, name='auto_triage_issue'),
     path('api/triage/classify/', classify_issue, name='classify_issue'),
     path('api/triage/detect-duplicate/', detect_duplicate_issue, name='detect_duplicate_issue'),
-    path('api/triage/suggest-assignee/<int:repository_id>/', suggest_assignee, name='suggest_assignee'),
+    path('api/triage/suggest-assignee/', suggest_assignee, name='suggest_assignee'),
+    path('api/triage/suggest-assignee/<int:repository_id>/', suggest_assignee, name='suggest_assignee_with_id'),  # Legacy
     
     # ChatBot (Slack/Discord)
     path('api/chatbot/command/', chatbot_command, name='chatbot_command'),
