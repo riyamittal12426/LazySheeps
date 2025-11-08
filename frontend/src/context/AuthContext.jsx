@@ -7,6 +7,7 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user is logged in on mount
     const token = localStorage.getItem('access_token');
     if (token) {
       fetchUserProfile(token);
