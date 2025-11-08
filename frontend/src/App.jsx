@@ -13,6 +13,7 @@ import UserProfile from './pages/UserProfile';
 import GitHubCallback from './pages/GitHubCallback';
 import GitHubAppCallback from './pages/GitHubAppCallback';
 import RepositorySelection from './pages/RepositorySelection';
+import TeamHealthRadar from './components/TeamHealthRadar';
 import { ReactFlowProvider } from '@xyflow/react';
 
 // AUTHENTICATION DISABLED - All routes are now accessible
@@ -53,6 +54,9 @@ function AppRoutes() {
           
           {/* User Profile */}
           <Route path="profile" element={<UserProfile />} />
+          
+          {/* Team Health Radar */}
+          <Route path="team-health" element={<TeamHealthRadar />} />
 
           {/* Repository Routes */}
           <Route path="repositories">

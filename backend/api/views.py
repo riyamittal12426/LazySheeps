@@ -690,6 +690,46 @@ def sync_repository(request, repo_id):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_repository(request, repo_id):
+    """
+    Delete a repository and all its related data
+    DELETE /api/repositories/<repo_id>/delete/
+    
+    This will:
+    1. Delete the repository (cascade deletes RepositoryWork, Issues, Commits)
+    2. Clean up orphaned contributors (contributors with no remaining RepositoryWork)
+    """
+    try:
+        repo = Repository.objects.get(id=repo_id)
+        repo_name = repo.name
+        
+        # Django will cascade delete: Repository -> RepositoryWork -> Issues/Commits
+        repo.delete()
+        
+        # Clean up orphaned contributors (those with no remaining RepositoryWork records)
+        from api.models import Contributor
+        orphaned_contributors = Contributor.objects.filter(works__isnull=True)
+        orphaned_count = orphaned_contributors.count()
+        orphaned_contributors.delete()
+        
+        return Response({
+            'message': f'Repository "{repo_name}" deleted successfully',
+            'orphaned_contributors_removed': orphaned_count
+        }, status=status.HTTP_200_OK)
+        
+    except Repository.DoesNotExist:
+        return Response({
+            'error': 'Repository not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to delete repository: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 # ============================================
 # COMMIT ANALYTICS
 # ============================================
