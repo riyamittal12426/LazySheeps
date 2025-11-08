@@ -1,30 +1,31 @@
 import React, { createContext, useContext } from 'react';
-import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
+// import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 
 const AuthContext = createContext(null);
 
+// AUTHENTICATION DISABLED - Mock user for development
 export const useAuth = () => {
-  const clerkAuth = useClerkAuth();
-  const { user, isLoaded } = useUser();
+  // Mock user data
+  const mockUser = {
+    id: 'dev-user-1',
+    username: 'Developer',
+    email: 'dev@langhub.local',
+    firstName: 'Dev',
+    lastName: 'User',
+    avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Developer',
+    fullName: 'Dev User',
+  };
   
   return {
-    user: user ? {
-      id: user.id,
-      username: user.username || user.firstName || 'User',
-      email: user.primaryEmailAddress?.emailAddress,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar_url: user.imageUrl,
-      fullName: user.fullName,
-    } : null,
-    loading: !isLoaded,
-    isAuthenticated: !!user && isLoaded,
-    signOut: clerkAuth.signOut,
-    ...clerkAuth,
+    user: mockUser,
+    loading: false,
+    isAuthenticated: true,
+    signOut: () => console.log('Sign out disabled in dev mode'),
+    isSignedIn: true,
   };
 };
 
-// This provider is now just a pass-through since Clerk handles everything
+// This provider is now just a pass-through since auth is disabled
 export const AuthProvider = ({ children }) => {
   return <>{children}</>;
 };

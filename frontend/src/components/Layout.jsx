@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { UserButton, useUser } from '@clerk/clerk-react';
+// import { UserButton, useUser } from '@clerk/clerk-react';
+import { useAuth } from '../context/AuthContext';
 import {
     Dialog,
     DialogBackdrop,
@@ -38,7 +39,7 @@ function classNames(...classes) {
 
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { user } = useUser();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     return (
@@ -203,18 +204,13 @@ export default function Layout() {
                                 <li className="-mx-6 mt-auto">
                                     <div className="border-t border-gray-700 pt-4 px-6">
                                         <div className="flex items-center gap-x-4">
-                                            <UserButton 
-                                                afterSignOutUrl="/sign-in"
-                                                appearance={{
-                                                    elements: {
-                                                        avatarBox: "size-8",
-                                                        userButtonPopoverCard: "bg-gray-800 border-gray-700",
-                                                        userButtonPopoverActionButton: "text-white hover:bg-gray-700",
-                                                    }
-                                                }}
+                                            <img 
+                                                src={user?.avatar_url} 
+                                                alt={user?.username}
+                                                className="size-8 rounded-full"
                                             />
                                             <span className="text-sm font-semibold leading-6 text-white">
-                                                {user?.username || user?.firstName || 'User'}
+                                                {user?.username || user?.firstName || 'Developer'}
                                             </span>
                                         </div>
                                     </div>
@@ -231,13 +227,10 @@ export default function Layout() {
                         <Bars3Icon aria-hidden="true" className="size-6" />
                     </button>
                     <div className="flex-1 text-sm font-semibold leading-6 text-white">LangHub</div>
-                    <UserButton 
-                        afterSignOutUrl="/sign-in"
-                        appearance={{
-                            elements: {
-                                avatarBox: "size-8",
-                            }
-                        }}
+                    <img 
+                        src={user?.avatar_url} 
+                        alt={user?.username}
+                        className="size-8 rounded-full"
                     />
                 </div>
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import OrganizationGraph from '../components/OrganizationGraph';
 import ImportRepository from '../components/ImportRepository';
+import LiveActivityFeed from '../components/LiveActivityFeed';
 // importing user name from clerck auth
 import { useUser } from '@clerk/clerk-react'; 
 import { 
@@ -303,6 +304,11 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Live Activity Feed */}
+      <div className="mb-8">
+        <LiveActivityFeed />
       </div>
 
       {/* Commit Summaries Card */}
