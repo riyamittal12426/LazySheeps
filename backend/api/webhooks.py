@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
-from api.models import Repository, Contributor, Commit, Issue
+from api.models import Repository, Contributor, Commit, Issue, RepositoryWork
 from api.github_importer import GitHubImporter
 import logging
 
@@ -168,7 +168,7 @@ def handle_pull_request_event(payload):
 
 def handle_issues_event(payload):
     """
-    Handle issues events
+    Handle issues events with auto-triage
     """
     action = payload['action']  # opened, closed, reopened, etc.
     issue = payload['issue']
@@ -190,14 +190,41 @@ def handle_issues_event(payload):
             }
         )
         
+        # Auto-triage new issues
+        triage_result = None
+        if action == 'opened':
+            from api.issue_triage import triage_service
+            
+            issue_data = {
+                'title': issue['title'],
+                'body': issue.get('body', ''),
+                'labels': [label['name'] for label in issue.get('labels', [])],
+                'number': issue['number']
+            }
+            
+            triage_result = triage_service.triage_issue(issue_data, repo)
+            logger.info(f"Auto-triage result: {triage_result['classification']['type']} - {triage_result['classification']['component']}")
+        
+        # Get or create repository work for the contributor
+        work, _ = RepositoryWork.objects.get_or_create(
+            repository=repo,
+            contributor=contributor,
+            defaults={
+                'summary': f"{contributor.username}'s work on {repo.name}"
+            }
+        )
+        
         # Create or update issue
         Issue.objects.update_or_create(
             url=issue['html_url'],
             defaults={
-                'title': issue['title'],
+                'work': work,
                 'state': issue['state'],
-                'created_at': issue['created_at'],
-                'raw_data': issue,
+                'summary': issue['title'],  # Store title in summary field
+                'raw_data': {
+                    **issue,
+                    'triage_result': triage_result  # Store triage result
+                },
             }
         )
         
@@ -212,7 +239,8 @@ def handle_issues_event(payload):
         'status': 'success',
         'action': action,
         'issue_number': issue['number'],
-        'repository': repo_name
+        'repository': repo_name,
+        'triage_result': triage_result if action == 'opened' else None
     }
 
 

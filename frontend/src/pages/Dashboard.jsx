@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import OrganizationGraph from '../components/OrganizationGraph';
 import ImportRepository from '../components/ImportRepository';
-import LiveActivityFeed from '../components/LiveActivityFeed';
-// importing user name from clerck auth
-import { useUser } from '@clerk/clerk-react'; 
+import GitHubAppConnect from '../components/GitHubAppConnect';
+import LiveActivityFeed from '../components/LiveActivityFeed'; 
 import { 
   ChartBarIcon, 
   UserGroupIcon, 
@@ -37,7 +36,6 @@ const formatDate = (dateString) => {
 
 export default function Dashboard() {
   const { isLoading, error, contributors, repositories } = useData();
-  const { user } = useUser(); // ✅ Call useUser at the top level
   const [showSettings, setShowSettings] = useState(false);
   const [activeRepositories, setActiveRepositories] = useState([]);
   const [activeContributors, setActiveContributors] = useState([]);
@@ -229,7 +227,7 @@ export default function Dashboard() {
             <div className="flex items-center">
               <PresentationChartBarIcon className="h-8 w-8 text-white mr-4" />
               <div>
-                <h1 className="text-2xl font-bold text-white">Hi {user?.firstName || user?.username || 'there'},</h1>
+                <h1 className="text-2xl font-bold text-white">Hi there,</h1>
                 <p className="text-indigo-100 mt-1">
                   Here's all you need to know about the Llama team.
                 </p>
@@ -310,6 +308,11 @@ export default function Dashboard() {
       {/* Live Activity Feed */}
       <div className="mb-8">
         <LiveActivityFeed />
+      </div>
+
+      {/* GitHub App Integration - ONE-CLICK ORG IMPORT */}
+      <div className="mb-8">
+        <GitHubAppConnect />
       </div>
 
       {/* Commit Summaries Card */}

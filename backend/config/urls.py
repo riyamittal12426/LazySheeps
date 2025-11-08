@@ -22,24 +22,28 @@ from api.views import (
     repository_health, predict_completion,
     collaboration_network, collaboration_patterns,
     dashboard_stats, activity_trends, search_contributors,
-    import_github_repository, import_status, sync_repository,
+    import_github_repository, import_status, sync_repository, delete_repository,
     commit_analytics, commit_timeline, contributor_commit_summaries,
     register, login, logout, get_profile, update_profile, get_user_stats
-)
-from api.sprint_views import (
-    suggest_sprint_plan, create_sprint, get_sprint, list_sprints,
-    update_sprint, delete_sprint, add_issue_to_sprint, update_sprint_issue,
-    sprint_velocity_trends, team_capacity_analysis, forecast_completion,
-    complete_sprint
 )
 from api.dora_views import repository_dora_metrics, calculate_all_dora_metrics
 from api.webhooks import github_webhook, webhook_health
 from api.github_auth import github_auth_url, github_callback, github_repositories, import_repositories
-from api.release_views import (
-    get_release_readiness, get_release_readiness_score_only, get_release_blockers,
-    get_readiness_trend, compare_repositories_readiness, get_all_repositories_readiness,
-    get_readiness_dashboard
+from api.triage_chatbot_views import (
+    auto_triage_issue, classify_issue, detect_duplicate_issue, suggest_assignee,
+    chatbot_command, pr_summary, team_health, daily_digest, risk_alerts,
+    slack_webhook, discord_webhook
 )
+from api.github_app import (
+    github_app_manifest, github_app_install_url, github_app_callback,
+    list_installations, installation_repositories, bulk_import_repositories,
+    github_app_webhook, delete_installation
+)
+from api.webhook_views import (
+    github_webhook_handler, trigger_periodic_sync, sync_repository_endpoint,
+    sync_jobs_list, webhook_health_check
+)
+from api.team_health import team_health_radar, contributor_health_detail
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -71,6 +75,16 @@ urlpatterns = [
     path('api/github/repositories/', github_repositories, name='github_repositories'),
     path('api/github/import/', import_repositories, name='import_repositories'),
     
+    # GitHub App Integration (Enterprise-grade)
+    path('api/github-app/manifest/', github_app_manifest, name='github_app_manifest'),
+    path('api/github-app/install-url/', github_app_install_url, name='github_app_install_url'),
+    path('api/github-app/callback/', github_app_callback, name='github_app_callback'),
+    path('api/github-app/installations/', list_installations, name='list_installations'),
+    path('api/github-app/installations/<int:installation_id>/repositories/', installation_repositories, name='installation_repositories'),
+    path('api/github-app/installations/<int:installation_id>/bulk-import/', bulk_import_repositories, name='bulk_import_repositories'),
+    path('api/github-app/installations/<int:installation_id>/delete/', delete_installation, name='delete_installation'),
+    path('api/github-app/webhook/', github_app_webhook, name='github_app_webhook'),
+    
     # Original endpoints
     path('api/get_data/', get_data, name='get_data'),
     path('api/llm_stream/', llm_stream_view, name='llm_stream'),
@@ -100,64 +114,44 @@ urlpatterns = [
     path('api/repositories/import/', import_github_repository, name='import_github_repository'),
     path('api/repositories/import-status/', import_status, name='import_status'),
     path('api/repositories/<int:repo_id>/sync/', sync_repository, name='sync_repository'),
+    path('api/repositories/<int:repo_id>/delete/', delete_repository, name='delete_repository'),
     
     # Commit Analytics
     path('api/commits/analytics/', commit_analytics, name='commit_analytics'),
     path('api/commits/timeline/', commit_timeline, name='commit_timeline'),
     path('api/commits/contributor-summaries/', contributor_commit_summaries, name='contributor_commit_summaries'),
     
-    # GitHub Webhooks
+    # GitHub Webhooks (Old - kept for backward compatibility)
     path('api/webhooks/github/', github_webhook, name='github_webhook'),
     path('api/webhooks/health/', webhook_health, name='webhook_health'),
+    path('api/webhooks/slack/', slack_webhook, name='slack_webhook'),
+    path('api/webhooks/discord/', discord_webhook, name='discord_webhook'),
+    
+    # Auto-Triage & Issue Management
+    path('api/triage/issue/', auto_triage_issue, name='auto_triage_issue'),
+    path('api/triage/classify/', classify_issue, name='classify_issue'),
+    path('api/triage/detect-duplicate/', detect_duplicate_issue, name='detect_duplicate_issue'),
+    path('api/triage/suggest-assignee/<int:repository_id>/', suggest_assignee, name='suggest_assignee'),
+    
+    # ChatBot (Slack/Discord)
+    path('api/chatbot/command/', chatbot_command, name='chatbot_command'),
+    path('api/chatbot/pr-summary/', pr_summary, name='pr_summary'),
+    path('api/chatbot/team-health/', team_health, name='team_health'),
+    path('api/chatbot/daily-digest/', daily_digest, name='daily_digest'),
+    path('api/chatbot/risk-alerts/', risk_alerts, name='risk_alerts'),
+    
+    # GitHub Auto-Sync System (New Enterprise-Grade)
+    path('api/github/webhook/', github_webhook_handler, name='github_webhook_handler'),
+    path('api/sync/periodic/', trigger_periodic_sync, name='trigger_periodic_sync'),
+    path('api/sync/repository/<int:repo_id>/', sync_repository_endpoint, name='sync_repository_endpoint'),
+    path('api/sync/jobs/', sync_jobs_list, name='sync_jobs_list'),
+    path('api/sync/health/', webhook_health_check, name='webhook_health_check'),
     
     # DORA Metrics
     path('api/repositories/<int:repo_id>/dora/', repository_dora_metrics, name='repository_dora'),
     path('api/dora/calculate-all/', calculate_all_dora_metrics, name='calculate_all_dora'),
     
-    # ============================================
-    # SPRINT PLANNING AI
-    # ============================================
-    
-    # AI Sprint Suggestion (Main Feature)
-    path('api/sprints/suggest/', suggest_sprint_plan, name='suggest_sprint_plan'),
-    
-    # Sprint CRUD
-    path('api/sprints/', create_sprint, name='create_sprint'),
-    path('api/sprints/list/', list_sprints, name='list_sprints'),
-    path('api/sprints/<int:sprint_id>/', get_sprint, name='get_sprint'),
-    path('api/sprints/<int:sprint_id>/update/', update_sprint, name='update_sprint'),
-    path('api/sprints/<int:sprint_id>/delete/', delete_sprint, name='delete_sprint'),
-    path('api/sprints/<int:sprint_id>/complete/', complete_sprint, name='complete_sprint'),
-    
-    # Sprint Issues
-    path('api/sprints/<int:sprint_id>/issues/', add_issue_to_sprint, name='add_issue_to_sprint'),
-    path('api/sprints/<int:sprint_id>/issues/<int:issue_id>/', update_sprint_issue, name='update_sprint_issue'),
-    
-    # Sprint Analytics
-    path('api/sprints/velocity/<int:repository_id>/', sprint_velocity_trends, name='sprint_velocity_trends'),
-    path('api/sprints/capacity/', team_capacity_analysis, name='team_capacity_analysis'),
-    path('api/sprints/forecast/<int:repository_id>/', forecast_completion, name='forecast_completion'),
-    
-    # ============================================
-    # RELEASE READINESS SCORE
-    # ============================================
-    
-    # Full Release Readiness Report
-    path('api/release-readiness/<int:repo_id>/', get_release_readiness, name='get_release_readiness'),
-    
-    # Lightweight Score Only
-    path('api/release-readiness/<int:repo_id>/score/', get_release_readiness_score_only, name='get_readiness_score_only'),
-    
-    # Blockers & Warnings
-    path('api/release-readiness/<int:repo_id>/blockers/', get_release_blockers, name='get_release_blockers'),
-    
-    # Trend Analysis
-    path('api/release-readiness/<int:repo_id>/trend/', get_readiness_trend, name='get_readiness_trend'),
-    
-    # Dashboard View
-    path('api/release-readiness/<int:repo_id>/dashboard/', get_readiness_dashboard, name='get_readiness_dashboard'),
-    
-    # Multi-Repository Views
-    path('api/release-readiness/all/', get_all_repositories_readiness, name='get_all_repositories_readiness'),
-    path('api/release-readiness/compare/', compare_repositories_readiness, name='compare_repositories_readiness'),
+    # Team Health Radar
+    path('api/team-health/', team_health_radar, name='team_health_radar'),
+    path('api/team-health/<int:contributor_id>/', contributor_health_detail, name='contributor_health_detail'),
 ]

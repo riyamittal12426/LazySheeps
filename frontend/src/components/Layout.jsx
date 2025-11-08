@@ -17,6 +17,9 @@ import {
     HomeIcon,
     UsersIcon,
     XMarkIcon,
+    HeartIcon,
+    ExclamationTriangleIcon,
+    ChatBubbleBottomCenterTextIcon,
 } from '@heroicons/react/24/outline';
 import LlamaChat from './LlamaChat';
 
@@ -24,8 +27,11 @@ import LlamaChat from './LlamaChat';
 const appNavigation = [
     { name: 'Dashboard', to: '/dashboard', icon: HomeIcon },
     { name: 'Analytics', to: '/analytics', icon: Cog6ToothIcon },
+    { name: 'Team Health', to: '/team-health', icon: HeartIcon },
     { name: 'Repositories', to: '/repositories', icon: FolderIcon },
     { name: 'Contributors', to: '/contributors', icon: UsersIcon },
+    { name: 'Auto-Triage', to: '/auto-triage', icon: ExclamationTriangleIcon },
+    { name: 'ChatBot', to: '/chatbot', icon: ChatBubbleBottomCenterTextIcon },
 ];
 
 // Placeholder teams data

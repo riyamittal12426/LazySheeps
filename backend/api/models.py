@@ -259,6 +259,18 @@ class Repository(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # GitHub App Integration
+    github_id = models.BigIntegerField(null=True, blank=True, unique=True)  # GitHub repository ID
+    installation = models.ForeignKey('GitHubAppInstallation', on_delete=models.CASCADE, 
+                                     related_name='repositories', null=True, blank=True)
+    language = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    
+    # Auto-Sync tracking
+    last_synced_at = models.DateTimeField(null=True, blank=True)
+    auto_sync_enabled = models.BooleanField(default=True)
+    webhook_configured = models.BooleanField(default=False)
+    
     # Organization (RBAC)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, 
                                      related_name='repositories', null=True, blank=True)
@@ -285,6 +297,11 @@ class Repository(models.Model):
     class Meta:
         verbose_name_plural = "Repositories"
         ordering = ['-stars']
+        indexes = [
+            models.Index(fields=['github_id']),
+            models.Index(fields=['installation']),
+            models.Index(fields=['last_synced_at']),
+        ]
 
     def __str__(self):
         return self.name
@@ -478,11 +495,25 @@ class Issue(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # GitHub fields for auto-sync
+    github_issue_id = models.BigIntegerField(null=True, blank=True, unique=True)
+    number = models.IntegerField(null=True, blank=True)  # Issue number (e.g., #123)
+    title = models.CharField(max_length=500, blank=True, null=True)
+    body = models.TextField(blank=True, null=True)
+    closed_at = models.DateTimeField(null=True, blank=True)
+    
     # Additional fields for analytics
     state = models.CharField(max_length=20, default='open')  # open, closed
     is_bug = models.BooleanField(default=False)
     is_feature = models.BooleanField(default=False)
     priority = models.CharField(max_length=20, default='medium')  # low, medium, high, critical
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['github_issue_id']),
+            models.Index(fields=['state']),
+            models.Index(fields=['work']),
+        ]
     
     def __str__(self):
         return f"Issue #{self.id} - {self.work.repository.name}"
@@ -490,6 +521,8 @@ class Issue(models.Model):
 class Commit(models.Model):
     id = models.AutoField(primary_key=True)
     work = models.ForeignKey(RepositoryWork, on_delete=models.CASCADE, related_name='commits')
+    sha = models.CharField(max_length=40, unique=True, null=True, blank=True)  # Git SHA
+    message = models.TextField(blank=True, null=True)
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, related_name='commits', null=True)
     contributor = models.ForeignKey(Contributor, on_delete=models.CASCADE, related_name='commits', null=True)
     url = models.URLField()
@@ -504,6 +537,13 @@ class Commit(models.Model):
     files_changed = models.IntegerField(default=0)
     committed_at = models.DateTimeField(blank=True, null=True)
     code_churn_ratio = models.FloatField(default=0.0)  # deletions / (additions + deletions)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['sha']),
+            models.Index(fields=['work']),
+            models.Index(fields=['committed_at']),
+        ]
     
     def __str__(self):
         return f"Commit #{self.id} - {self.work.repository.name}"
@@ -607,5 +647,91 @@ class ActivityLog(models.Model):
         return f"{self.contributor.username} - {self.activity_type} at {self.timestamp}"
 
 
-# Import sprint models to make them available
-from .sprint_models import Sprint, SprintIssue, TeamMemberCapacity, SprintVelocityHistory
+class GitHubAppInstallation(models.Model):
+    """
+    Store GitHub App installations for org-wide repository access
+    This enables one-click import of all organization repositories
+    """
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='github_installations', null=True, blank=True)
+    installation_id = models.BigIntegerField(unique=True)
+    
+    # Installation account info
+    account_login = models.CharField(max_length=255, blank=True, null=True)
+    account_type = models.CharField(max_length=50, blank=True, null=True)  # User or Organization
+    account_avatar_url = models.URLField(blank=True, null=True)
+    target_type = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Setup info
+    setup_action = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['installation_id']),
+        ]
+    
+    def __str__(self):
+        return f"GitHub App Installation {self.installation_id} for {self.account_login}"
+
+
+class SyncJob(models.Model):
+    """
+    Track all sync jobs for monitoring and debugging
+    Provides visibility into auto-sync system performance
+    """
+    JOB_TYPE_CHOICES = [
+        ('auto_import', 'Auto Import'),
+        ('periodic_sync', 'Periodic Sync'),
+        ('manual_sync', 'Manual Sync'),
+        ('webhook_triggered', 'Webhook Triggered'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('running', 'Running'),
+        ('completed', 'Completed'),
+        ('completed_with_errors', 'Completed with Errors'),
+        ('failed', 'Failed'),
+    ]
+    
+    id = models.AutoField(primary_key=True)
+    installation = models.ForeignKey(GitHubAppInstallation, on_delete=models.CASCADE, related_name='sync_jobs', null=True, blank=True)
+    
+    job_type = models.CharField(max_length=50, choices=JOB_TYPE_CHOICES)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    
+    # Metrics
+    repositories_processed = models.IntegerField(default=0)
+    errors_count = models.IntegerField(default=0)
+    
+    # Details (JSON field for flexible data storage)
+    details = models.JSONField(default=dict, blank=True)
+    error_message = models.TextField(blank=True, null=True)
+    
+    # Timing
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-started_at']
+        indexes = [
+            models.Index(fields=['installation']),
+            models.Index(fields=['job_type']),
+            models.Index(fields=['status']),
+            models.Index(fields=['-started_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.job_type} - {self.status} ({self.started_at})"
+    
+    def duration_seconds(self):
+        """Calculate job duration in seconds"""
+        if self.completed_at:
+            return (self.completed_at - self.started_at).total_seconds()
+        return (timezone.now() - self.started_at).total_seconds()
