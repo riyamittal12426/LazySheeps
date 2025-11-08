@@ -605,3 +605,36 @@ class ActivityLog(models.Model):
     
     def __str__(self):
         return f"{self.contributor.username} - {self.activity_type} at {self.timestamp}"
+
+
+class GitHubAppInstallation(models.Model):
+    """
+    Store GitHub App installations for org-wide repository access
+    This enables one-click import of all organization repositories
+    """
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='github_installations')
+    installation_id = models.BigIntegerField(unique=True)
+    
+    # Installation account info
+    account_login = models.CharField(max_length=255, blank=True, null=True)
+    account_type = models.CharField(max_length=50, blank=True, null=True)  # User or Organization
+    account_avatar_url = models.URLField(blank=True, null=True)
+    target_type = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Setup info
+    setup_action = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['installation_id']),
+        ]
+    
+    def __str__(self):
+        return f"GitHub App Installation {self.installation_id} for {self.account_login}"

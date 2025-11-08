@@ -11,6 +11,7 @@ import ContributorDetail from './pages/ContributorDetail';
 import ContributorStats from './pages/ContributorStats';
 import UserProfile from './pages/UserProfile';
 import GitHubCallback from './pages/GitHubCallback';
+import GitHubAppCallback from './pages/GitHubAppCallback';
 import RepositorySelection from './pages/RepositorySelection';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -30,6 +31,7 @@ function AppRoutes() {
         
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />
+        <Route path="/auth/github-app/callback" element={<GitHubAppCallback />} />
         
         {/* Onboarding Routes */}
         <Route path="/onboarding/repositories" element={

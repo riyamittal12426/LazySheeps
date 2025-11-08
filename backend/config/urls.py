@@ -29,6 +29,11 @@ from api.views import (
 from api.dora_views import repository_dora_metrics, calculate_all_dora_metrics
 from api.webhooks import github_webhook, webhook_health
 from api.github_auth import github_auth_url, github_callback, github_repositories, import_repositories
+from api.github_app import (
+    github_app_manifest, github_app_install_url, github_app_callback,
+    list_installations, installation_repositories, bulk_import_repositories,
+    github_app_webhook, delete_installation
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -59,6 +64,16 @@ urlpatterns = [
     path('api/auth/github/callback/', github_callback, name='github_callback'),
     path('api/github/repositories/', github_repositories, name='github_repositories'),
     path('api/github/import/', import_repositories, name='import_repositories'),
+    
+    # GitHub App Integration (Enterprise-grade)
+    path('api/github-app/manifest/', github_app_manifest, name='github_app_manifest'),
+    path('api/github-app/install-url/', github_app_install_url, name='github_app_install_url'),
+    path('api/github-app/callback/', github_app_callback, name='github_app_callback'),
+    path('api/github-app/installations/', list_installations, name='list_installations'),
+    path('api/github-app/installations/<int:installation_id>/repositories/', installation_repositories, name='installation_repositories'),
+    path('api/github-app/installations/<int:installation_id>/bulk-import/', bulk_import_repositories, name='bulk_import_repositories'),
+    path('api/github-app/installations/<int:installation_id>/delete/', delete_installation, name='delete_installation'),
+    path('api/github-app/webhook/', github_app_webhook, name='github_app_webhook'),
     
     # Original endpoints
     path('api/get_data/', get_data, name='get_data'),
