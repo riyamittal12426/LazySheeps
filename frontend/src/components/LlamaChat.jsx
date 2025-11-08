@@ -258,6 +258,8 @@ const LlamaChat = () => {
                     isFocused ? 'border-indigo-500 ring-2 ring-indigo-100' : 'border-gray-300'
                   } focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100`}
                   disabled={isStreaming}
+                  autoComplete="off"
+                  x-webkit-speech="false"
                 />
                 <button
                   type="submit"

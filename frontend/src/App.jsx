@@ -13,7 +13,11 @@ import ContributorDetail from './pages/ContributorDetail';
 import ContributorStats from './pages/ContributorStats';
 import UserProfile from './pages/UserProfile';
 import GitHubCallback from './pages/GitHubCallback';
+import GitHubAppCallback from './pages/GitHubAppCallback';
 import RepositorySelection from './pages/RepositorySelection';
+import TeamHealthRadar from './components/TeamHealthRadar';
+import AutoTriage from './components/AutoTriage';
+import ChatBot from './components/ChatBot';
 import { ReactFlowProvider } from '@xyflow/react';
 
 // AUTHENTICATION DISABLED - All routes are now accessible
@@ -38,6 +42,7 @@ function AppRoutes() {
         
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />
+        <Route path="/auth/github-app/callback" element={<GitHubAppCallback />} />
         
         {/* Onboarding Routes */}
         <Route path="/onboarding/repositories" element={
@@ -56,6 +61,9 @@ function AppRoutes() {
           
           {/* User Profile */}
           <Route path="profile" element={<UserProfile />} />
+          
+          {/* Team Health Radar */}
+          <Route path="team-health" element={<TeamHealthRadar />} />
 
           {/* Repository Routes */}
           <Route path="repositories">
@@ -69,6 +77,10 @@ function AppRoutes() {
             <Route path=":contributorId" element={<ContributorDetail />} />
             <Route path=":contributorId/stats" element={<ContributorStats />} />
           </Route>
+
+          {/* Auto-Triage & ChatBot Routes */}
+          <Route path="auto-triage" element={<AutoTriage />} />
+          <Route path="chatbot" element={<ChatBot />} />
 
           {/* 404 Not Found Route */}
           <Route path="*" element={
