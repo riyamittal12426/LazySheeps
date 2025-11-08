@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from .github_sync import WebhookProcessor, GitHubSyncManager, SyncJobRunner
 from .models import GitHubAppInstallation, SyncJob
 from django.utils import timezone
+from .live_stream import broadcast_push_event, broadcast_pull_request_event, broadcast_issues_event
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,8 @@ def github_webhook_handler(request):
         
         elif event_type == 'push':
             result = WebhookProcessor.process_push_event(payload)
+            # Broadcast to live activity feed
+            broadcast_push_event(payload)
             return JsonResponse({
                 'status': 'success',
                 'event': event_type,
@@ -75,6 +78,8 @@ def github_webhook_handler(request):
         
         elif event_type == 'pull_request':
             result = WebhookProcessor.process_pull_request_event(payload)
+            # Broadcast to live activity feed
+            broadcast_pull_request_event(payload)
             return JsonResponse({
                 'status': 'success',
                 'event': event_type,
@@ -83,6 +88,8 @@ def github_webhook_handler(request):
         
         elif event_type == 'issues':
             result = WebhookProcessor.process_issues_event(payload)
+            # Broadcast to live activity feed
+            broadcast_issues_event(payload)
             return JsonResponse({
                 'status': 'success',
                 'event': event_type,
