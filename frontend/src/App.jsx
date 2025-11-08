@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { SignIn, SignUp, useAuth as useClerkAuth } from '@clerk/clerk-react';
+// import { SignIn, SignUp, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import EnhancedDashboard from './pages/EnhancedDashboard';
@@ -14,29 +14,9 @@ import GitHubCallback from './pages/GitHubCallback';
 import RepositorySelection from './pages/RepositorySelection';
 import { ReactFlowProvider } from '@xyflow/react';
 
-// Protected Route Component using Clerk or JWT
+// AUTHENTICATION DISABLED - All routes are now accessible
 const ProtectedRoute = ({ children }) => {
-  const { isLoaded, isSignedIn } = useClerkAuth();
-  const jwtToken = localStorage.getItem('access_token');
-
-  // Show loading state while Clerk is initializing
-  if (!isLoaded && !jwtToken) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  // Check if authenticated via Clerk or JWT
-  const isAuthenticated = isSignedIn || !!jwtToken;
-
-  // Redirect to sign-in if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" replace />;
-  }
-
-  // User is authenticated, show the protected content
+  // Always return children without authentication check
   return children;
 };
 
@@ -44,17 +24,9 @@ function AppRoutes() {
   return (
     <ReactFlowProvider>
       <Routes>
-        {/* Clerk Auth Routes */}
-        <Route path="/sign-in/*" element={
-          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-            <SignIn routing="path" path="/sign-in" />
-          </div>
-        } />
-        <Route path="/sign-up/*" element={
-          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-            <SignUp routing="path" path="/sign-up" />
-          </div>
-        } />
+        {/* Auth Routes - Disabled but kept for future use */}
+        {/* <Route path="/sign-in/*" element={...} /> */}
+        {/* <Route path="/sign-up/*" element={...} /> */}
         
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />
@@ -66,8 +38,8 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
         
-        {/* Protected Routes */}
-        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        {/* All Routes - No Protection */}
+        <Route path="/" element={<Layout />}>
           {/* Redirect root to dashboard */}
           <Route index element={<Navigate to="/dashboard" replace />} />
           
