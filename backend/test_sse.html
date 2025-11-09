@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .connected { background: #4caf50; color: white; }
+        .disconnected { background: #f44336; color: white; }
+        #events { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; }
+        .event { padding: 5px; margin: 5px 0; background: #f0f0f0; border-left: 3px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>SSE Endpoint Test</h1>
+    <div id="status" class="disconnected">Disconnected</div>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <button onclick="clearEvents()">Clear Events</button>
+    <h2>Events:</h2>
+    <div id="events"></div>
+
+    <script>
+        let eventSource = null;
+
+        function addEvent(message, type = 'info') {
+            const eventsDiv = document.getElementById('events');
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'event';
+            eventDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+            eventsDiv.insertBefore(eventDiv, eventsDiv.firstChild);
+        }
+
+        function connect() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            addEvent('Connecting to SSE endpoint...');
+            
+            eventSource = new EventSource('http://localhost:8000/api/events/stream/');
+            
+            eventSource.onopen = function() {
+                document.getElementById('status').className = 'connected';
+                document.getElementById('status').textContent = 'Connected';
+                addEvent('✅ Connected successfully!', 'success');
+            };
+            
+            eventSource.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    addEvent(`📡 Event: ${data.type} - ${JSON.stringify(data)}`, 'message');
+                } catch (e) {
+                    addEvent(`📡 Raw message: ${event.data}`, 'message');
+                }
+            };
+            
+            eventSource.onerror = function(error) {
+                document.getElementById('status').className = 'disconnected';
+                document.getElementById('status').textContent = 'Disconnected';
+                addEvent('❌ Connection error', 'error');
+                console.error('SSE Error:', error);
+            };
+        }
+
+        function disconnect() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+                document.getElementById('status').className = 'disconnected';
+                document.getElementById('status').textContent = 'Disconnected';
+                addEvent('Disconnected by user');
+            }
+        }
+
+        function clearEvents() {
+            document.getElementById('events').innerHTML = '';
+        }
+
+        // Auto-connect on page load
+        window.onload = function() {
+            connect();
+        };
+    </script>
+</body>
+</html>

@@ -18,6 +18,8 @@ import RepositorySelection from './pages/RepositorySelection';
 import TeamHealthRadar from './components/TeamHealthRadar';
 import AutoTriage from './components/AutoTriage';
 import ChatBot from './components/ChatBot';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import { ReactFlowProvider } from '@xyflow/react';
 
 // AUTHENTICATION DISABLED - All routes are now accessible
@@ -36,9 +38,15 @@ function AppRoutes() {
         {/* Marketing Pages */}
         <Route path="/pricing" element={<PricingPage />} />
         
-        {/* Auth Routes - Disabled but kept for future use */}
-        {/* <Route path="/sign-in/*" element={...} /> */}
-        {/* <Route path="/sign-up/*" element={...} /> */}
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Redirect old routes to new /app prefix */}
+        <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+        <Route path="/repositories/*" element={<Navigate to="/app/repositories" replace />} />
+        <Route path="/contributors/*" element={<Navigate to="/app/contributors" replace />} />
         
         {/* GitHub OAuth Routes */}
         <Route path="/auth/github/callback" element={<GitHubCallback />} />
@@ -51,8 +59,11 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
         
-        {/* All Routes - No Protection */}
-        <Route path="/" element={<Layout />}>
+        {/* App Routes with Layout */}
+        <Route path="/app" element={<Layout />}>
+          {/* Redirect /app to dashboard */}
+          <Route index element={<Navigate to="/app/dashboard" replace />} />
+          
           {/* Dashboard Routes */}
           <Route path="dashboard" element={<Dashboard />} />
           

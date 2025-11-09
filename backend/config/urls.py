@@ -44,6 +44,7 @@ from api.webhook_views import (
     sync_jobs_list, webhook_health_check
 )
 from api.team_health import team_health_radar, contributor_health_detail
+from api.live_stream import live_event_stream
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from api.rbac_views import OrganizationViewSet, TeamViewSet, AuditLogViewSet
@@ -154,4 +155,7 @@ urlpatterns = [
     # Team Health Radar
     path('api/team-health/', team_health_radar, name='team_health_radar'),
     path('api/team-health/<int:contributor_id>/', contributor_health_detail, name='contributor_health_detail'),
+    
+    # Live Activity Stream (SSE)
+    path('api/events/stream/', live_event_stream, name='live_event_stream'),
 ]

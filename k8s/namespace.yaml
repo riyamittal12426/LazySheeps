@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lazysheeps
+  labels:
+    name: lazysheeps
+    environment: production

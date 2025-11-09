@@ -36,6 +36,40 @@
   }
 }
 
+/* Lightning border animation */
+@keyframes lightning {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+/* Scan lines animation */
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+/* Neon glow pulse */
+@keyframes neon-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.5))
+            drop-shadow(0 0 15px rgba(0, 149, 255, 0.3))
+            drop-shadow(0 0 30px rgba(0, 149, 255, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.8))
+            drop-shadow(0 0 25px rgba(0, 149, 255, 0.5))
+            drop-shadow(0 0 40px rgba(0, 149, 255, 0.3));
+  }
+}
+
 .animate-pulse-gradient {
   background: linear-gradient(to right, #4f46e5, #3b82f6, #4f46e5);
   background-size: 200% 100%;
@@ -48,6 +82,10 @@
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
 }
 
 .typing-cursor {

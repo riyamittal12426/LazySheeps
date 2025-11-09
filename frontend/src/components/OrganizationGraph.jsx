@@ -121,8 +121,9 @@ const OrganizationGraph = ({ repositories, contributors }) => {
                 },
             });
 
-            contributor.works.forEach(work => {
-                const targetRepoExists = repositories.some(repo => `repo-${repo.id}` === `repo-${work.repository}`);
+            contributor.works?.forEach(work => {
+                const targetRepoExists = repositories.some(repo => repo.id === work.repository);
+                
                 if (targetRepoExists) {
                     initialEdges.push({
                         id: `edge-${contributor.id}-${work.repository}`,
