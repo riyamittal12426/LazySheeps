@@ -9,7 +9,7 @@ export const useAuth = () => {
   const mockUser = {
     id: 'dev-user-1',
     username: 'Developer',
-    email: 'dev@langhub.local',
+    email: 'dev@katalyst.local',
     firstName: 'Dev',
     lastName: 'User',
     avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Developer',

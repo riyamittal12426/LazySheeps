@@ -451,8 +451,8 @@ def process_repositories(repo_urls: List[str], token: Optional[str] = None) -> D
 # --- Main Execution (Keep the existing main block) ---
 if __name__ == "__main__":
     repository_urls = [
-        "https://github.com/meta-llama/llama-models",
-        "https://github.com/meta-llama/codellama"
+        "https://github.com/meta- / -models",
+        "https://github.com/meta- /code "
     ]
 
     if not GITHUB_TOKEN:

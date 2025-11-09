@@ -70,7 +70,7 @@ Body: "Getting HTTP 500 error when entering wrong password..."
 
 ### ChatBot Example
 
-**Command:** `/langhub team-health`
+**Command:** `/katalyst team-health`
 
 **Output:**
 ```
@@ -107,7 +107,7 @@ Body: "Getting HTTP 500 error when entering wrong password..."
 
 1. **Create App**: https://api.slack.com/apps → "Create New App"
 2. **Add Slash Command**: 
-   - Command: `/langhub`
+   - Command: `/katalyst`
    - Request URL: `https://your-domain.com/api/webhooks/slack/`
 3. **Get Webhook URL**: Incoming Webhooks → Activate → Copy URL
 4. **Add to .env**:
@@ -117,8 +117,8 @@ Body: "Getting HTTP 500 error when entering wrong password..."
 
 **Test It:**
 ```
-/langhub team-health
-/langhub digest
+/katalyst team-health
+/katalyst digest
 ```
 
 ---
@@ -134,8 +134,8 @@ Body: "Getting HTTP 500 error when entering wrong password..."
 
 **Test It:**
 ```
-!langhub team-health
-!langhub digest
+!katalyst team-health
+!katalyst digest
 ```
 
 ---

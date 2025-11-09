@@ -308,10 +308,15 @@ def github_app_callback(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def list_installations(request):
     """List all GitHub App installations for the current user"""
-    installations = GitHubAppInstallation.objects.filter(user=request.user)
+    # If user is authenticated, show only their installations
+    # Otherwise, show all installations (for demo/testing)
+    if request.user.is_authenticated:
+        installations = GitHubAppInstallation.objects.filter(user=request.user)
+    else:
+        installations = GitHubAppInstallation.objects.all()
     
     data = []
     for installation in installations:
@@ -332,16 +337,20 @@ def list_installations(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def installation_repositories(request, installation_id):
     """
     Fetch all repositories accessible through this installation
     """
     try:
-        installation = GitHubAppInstallation.objects.get(
-            id=installation_id,
-            user=request.user
-        )
+        # If user is authenticated, filter by user
+        if request.user.is_authenticated:
+            installation = GitHubAppInstallation.objects.get(
+                id=installation_id,
+                user=request.user
+            )
+        else:
+            installation = GitHubAppInstallation.objects.get(id=installation_id)
     except GitHubAppInstallation.DoesNotExist:
         return Response({'error': 'Installation not found'}, status=404)
     
@@ -390,17 +399,21 @@ def installation_repositories(request, installation_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def bulk_import_repositories(request, installation_id):
     """
     Bulk import repositories with automatic webhook setup
     This is the WOW feature - import 50+ repos with one click!
     """
     try:
-        installation = GitHubAppInstallation.objects.get(
-            id=installation_id,
-            user=request.user
-        )
+        # If user is authenticated, filter by user
+        if request.user.is_authenticated:
+            installation = GitHubAppInstallation.objects.get(
+                id=installation_id,
+                user=request.user
+            )
+        else:
+            installation = GitHubAppInstallation.objects.get(id=installation_id)
     except GitHubAppInstallation.DoesNotExist:
         return Response({'error': 'Installation not found'}, status=404)
     

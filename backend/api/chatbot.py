@@ -1,5 +1,5 @@
 """
-Slack & Discord Bot Integration for LangHub
+Slack & Discord Bot Integration for Katalyst
 Chat commands for team collaboration
 """
 import os
@@ -459,10 +459,10 @@ class SlackBot(ChatBotService):
         Handle slash commands
         
         Commands:
-        - /langhub pr <number> - Get PR summary
-        - /langhub team-health - Get team health metrics
-        - /langhub digest - Get daily digest
-        - /langhub risks - Get risk alerts
+        - /katalyst pr <number> - Get PR summary
+        - /katalyst team-health - Get team health metrics
+        - /katalyst digest - Get daily digest
+        - /katalyst risks - Get risk alerts
         """
         if command == 'pr' and len(args) >= 1:
             pr_number = int(args[0])
@@ -485,17 +485,17 @@ class SlackBot(ChatBotService):
     def _help_message(self) -> str:
         """Generate help message"""
         return """
-🤖 **LangHub Bot Commands**
+🤖 **Katalyst Bot Commands**
 
-`/langhub pr <number> [repo]` - AI summary of PR
-`/langhub team-health [repo_id]` - Team health radar chart
-`/langhub digest` - Yesterday's activity digest
-`/langhub risks` - Detect potential risks
-`/langhub help` - Show this message
+`/katalyst pr <number> [repo]` - AI summary of PR
+`/katalyst team-health [repo_id]` - Team health radar chart
+`/katalyst digest` - Yesterday's activity digest
+`/katalyst risks` - Detect potential risks
+`/katalyst help` - Show this message
 
 Examples:
-• `/langhub pr 123` - Summarize PR #123
-• `/langhub team-health` - Show team metrics
+• `/katalyst pr 123` - Summarize PR #123
+• `/katalyst team-health` - Show team metrics
 """
 
 

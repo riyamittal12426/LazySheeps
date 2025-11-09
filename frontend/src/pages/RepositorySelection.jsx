@@ -124,7 +124,7 @@ const RepositorySelection = () => {
             Import Git Repositories
           </h1>
           <p className="text-lg text-gray-600">
-            Select the repositories you'd like to import to OrgLens
+            Select the repositories you'd like to import to Katalyst
           </p>
         </div>
 

@@ -263,8 +263,8 @@ pip install psycopg2-binary
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'langhub_db',
-        'USER': 'langhub_user',
+        'NAME': 'katalyst_db',
+        'USER': 'katalyst_user',
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432',
@@ -275,7 +275,7 @@ DATABASES = {
 python manage.py dumpdata > data_backup.json
 
 # 4. Create PostgreSQL database
-createdb langhub_db
+createdb katalyst_db
 
 # 5. Run migrations on PostgreSQL
 python manage.py migrate

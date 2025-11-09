@@ -1,7 +1,7 @@
 # Dynamic GitHub Repository Import - User Guide
 
 ## Overview
-LangHub now supports **dynamic GitHub repository import**, allowing you to analyze any public GitHub repository without hardcoded data. Just paste a repository URL and let LangHub fetch all the data automatically!
+Katalyst now supports **dynamic GitHub repository import**, allowing you to analyze any public GitHub repository without hardcoded data. Just paste a repository URL and let Katalyst fetch all the data automatically!
 
 ## Features
 
@@ -73,7 +73,7 @@ For better performance and to avoid rate limits, you can provide a GitHub Person
 
 ### Step 4: Click Import
 
-LangHub will:
+Katalyst will:
 1. Validate the repository URL
 2. Fetch repository metadata
 3. Import all contributors
@@ -222,7 +222,7 @@ All imported data is stored in SQLite database:
 
 ### Analytics Generation
 
-After import, LangHub automatically:
+After import, Katalyst automatically:
 - Calculates contributor scores
 - Awards badges based on achievements
 - Analyzes work patterns for burnout detection

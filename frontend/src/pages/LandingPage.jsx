@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SplashCursor from '../components/SplashCursor';
+import CircularGallery from '../components/CircularGallery';
 import { 
   ChartBarIcon, 
   UserGroupIcon, 
@@ -17,40 +18,43 @@ const LandingPage = () => {
 
   const features = [
     {
-      icon: ChartBarIcon,
-      title: 'DORA Metrics',
-      description: 'Track deployment frequency, lead time, and change failure rate in real-time.',
-      color: 'from-blue-500 to-cyan-500'
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+      text: 'DORA Metrics'
     },
     {
-      icon: RocketLaunchIcon,
-      title: 'Release Readiness',
-      description: 'Get instant insights into your release quality with AI-powered scoring.',
-      color: 'from-purple-500 to-pink-500'
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+      text: 'Release Readiness'
     },
     {
-      icon: BeakerIcon,
-      title: 'Sprint Planner AI',
-      description: 'Optimize sprint planning with intelligent task allocation and predictions.',
-      color: 'from-green-500 to-emerald-500'
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop',
+      text: 'Sprint Planner AI'
     },
     {
-      icon: UserGroupIcon,
-      title: 'Team Analytics',
-      description: 'Understand team performance and collaboration patterns with deep insights.',
-      color: 'from-orange-500 to-red-500'
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
+      text: 'Team Analytics'
     },
     {
-      icon: ShieldCheckIcon,
-      title: 'RBAC & Security',
-      description: 'Enterprise-grade role-based access control and security features.',
-      color: 'from-indigo-500 to-purple-500'
+      image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=600&fit=crop',
+      text: 'RBAC & Security'
     },
     {
-      icon: ArrowTrendingUpIcon,
-      title: 'GitHub Integration',
-      description: 'Seamlessly sync with GitHub repositories and track all activities.',
-      color: 'from-pink-500 to-rose-500'
+      image: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&h=600&fit=crop',
+      text: 'GitHub Integration'
+    }
+  ];
+
+  const ctaItems = [
+    {
+      image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=600&fit=crop',
+      text: 'Transform Your Workflow'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop',
+      text: 'Ship Faster'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop',
+      text: 'Get Started Free'
     }
   ];
 
@@ -111,10 +115,10 @@ const LandingPage = () => {
               Start Free Trial
             </button>
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/pricing')}
               className="px-8 py-4 bg-gray-800 hover:bg-gray-700 rounded-lg font-bold text-lg transition border border-gray-600"
             >
-              View Demo
+              Learn more
             </button>
           </div>
 
@@ -156,27 +160,44 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 py-8 px-4">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="relative bg-gray-800 rounded-2xl border border-gray-700 p-10 min-h-[320px]"
-              >
-                <div>
-                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
-                    <feature.icon className="h-8 w-8 text-white" />
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold mb-4 text-white">
-                    {feature.title}
-                  </h3>
-                  
-                  <p className="text-gray-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="w-full h-[600px] relative">
+            <CircularGallery 
+              items={features}
+              bend={2}
+              textColor="#ffffff"
+              borderRadius={0.08}
+              font="bold 28px Figtree"
+              scrollSpeed={2.5}
+              scrollEase={0.08}
+            />
+          </div>
+
+          {/* Feature Descriptions Below Gallery */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20 px-4">
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">DORA Metrics</h3>
+              <p className="text-gray-400">Track deployment frequency, lead time, and change failure rate in real-time.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">Release Readiness</h3>
+              <p className="text-gray-400">Get instant insights into your release quality with AI-powered scoring.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">Sprint Planner AI</h3>
+              <p className="text-gray-400">Optimize sprint planning with intelligent task allocation and predictions.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">Team Analytics</h3>
+              <p className="text-gray-400">Understand team performance and collaboration patterns with deep insights.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">RBAC & Security</h3>
+              <p className="text-gray-400">Enterprise-grade role-based access control and security features.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-3 text-white">GitHub Integration</h3>
+              <p className="text-gray-400">Seamlessly sync with GitHub repositories and track all activities.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -184,7 +205,7 @@ const LandingPage = () => {
       {/* CTA Section */}
       <section className="py-20 px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-12 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-600 via- -600 to-black-600 rounded-3xl p-12 relative overflow-hidden">
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Ready to Transform Your Workflow?
@@ -209,7 +230,8 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from
+                -indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <SparklesIcon className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">Katalyst</span>

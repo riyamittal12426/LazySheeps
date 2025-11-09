@@ -14,7 +14,7 @@ import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
 
 // --- Remove the custom remarkCustomTags plugin function ---
 
-const LlamaChat = () => {
+const  Chat = () => {
   // ... existing state and hooks ...
   const [prompt, setPrompt] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -181,13 +181,13 @@ const LlamaChat = () => {
                 {(streamingResponse || isStreaming) && (
                   <div className="prose prose-sm max-w-none">
                     <div className="flex items-start space-x-3 mb-3">
-                       {/* ... Llama Assistant header ... */}
+                       {/* ...   Assistant header ... */}
                        <div className="flex-shrink-0 mt-0.5">
                         <div className="bg-gradient-to-r from-indigo-600 to-blue-500 rounded-full p-1">
                           <ChatBubbleLeftEllipsisIcon className="h-4 w-4 text-white" />
                         </div>
                       </div>
-                      <p className="text-sm font-medium text-gray-900">Llama Assistant</p>
+                      <p className="text-sm font-medium text-gray-900">  Assistant</p>
                     </div>
 
                     <div className="markdown-content pl-8 relative">
@@ -289,4 +289,4 @@ const LlamaChat = () => {
   );
 };
 
-export default LlamaChat;
+export default  Chat;

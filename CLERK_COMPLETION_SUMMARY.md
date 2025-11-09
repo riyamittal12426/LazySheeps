@@ -143,7 +143,7 @@ You should be automatically redirected to: http://localhost:5175/sign-in
 ### 5. Enable OAuth (Quick Test)
 **For Google:**
 1. Go to https://dashboard.clerk.com
-2. Select your LangHub app
+2. Select your Katalyst app
 3. Go to: User & Authentication → Social Connections
 4. Find "Google" → Toggle ON
 5. Choose "Use Clerk's dev keys for testing"

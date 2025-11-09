@@ -1,7 +1,7 @@
 # Clerk Integration Guide
 
 ## Overview
-Your LangHub application has been successfully migrated from custom JWT authentication to Clerk authentication.
+Your Katalyst application has been successfully migrated from custom JWT authentication to Clerk authentication.
 
 ## What Changed
 
@@ -69,7 +69,7 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_actual_key_here
 In your Clerk dashboard, configure these settings:
 
 **Application Settings:**
-- Application Name: LangHub
+- Application Name: Katalyst
 - Application Logo: (optional - upload your logo)
 
 **Paths:**

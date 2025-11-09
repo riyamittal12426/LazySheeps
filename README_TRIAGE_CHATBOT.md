@@ -59,10 +59,10 @@ Automatically classify GitHub issues with AI:
 Team collaboration bot with AI insights:
 
 **Commands:**
-- `/langhub pr <number>` - AI summary of pull requests
-- `/langhub team-health` - DORA metrics & radar chart
-- `/langhub digest` - Daily activity summary
-- `/langhub risks` - Detect potential issues
+- `/katalyst pr <number>` - AI summary of pull requests
+- `/katalyst team-health` - DORA metrics & radar chart
+- `/katalyst digest` - Daily activity summary
+- `/katalyst risks` - Detect potential issues
 
 **Features:**
 - Real-time PR analysis
@@ -165,16 +165,16 @@ curl http://localhost:8000/api/chatbot/risk-alerts/
 
 #### Slack Setup
 1. Create app at https://api.slack.com/apps
-2. Add slash command `/langhub`
+2. Add slash command `/katalyst`
 3. Point to `https://your-domain.com/api/webhooks/slack/`
 4. Install to workspace
 
 **Usage:**
 ```
-/langhub pr 123 owner/repo
-/langhub team-health
-/langhub digest
-/langhub risks
+/katalyst pr 123 owner/repo
+/katalyst team-health
+/katalyst digest
+/katalyst risks
 ```
 
 #### Discord Setup
@@ -184,10 +184,10 @@ curl http://localhost:8000/api/chatbot/risk-alerts/
 
 **Usage:**
 ```
-!langhub pr 123 owner/repo
-!langhub team-health
-!langhub digest
-!langhub risks
+!katalyst pr 123 owner/repo
+!katalyst team-health
+!katalyst digest
+!katalyst risks
 ```
 
 ---
@@ -527,7 +527,7 @@ def handle_command(self, command, args):
 
 ## 📝 License
 
-This project is part of LangHub/LazySheeps.
+This project is part of Katalyst/LazySheeps.
 See main repository for license details.
 
 ---

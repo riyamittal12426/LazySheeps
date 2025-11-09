@@ -5,7 +5,7 @@
 ### Method 1: Use Clerk Dev Keys (Instant - Recommended for Testing)
 
 1. Go to https://dashboard.clerk.com
-2. Select your LangHub application
+2. Select your Katalyst application
 3. Navigate to: **User & Authentication** → **Social Connections**
 4. Find **Google**:
    - Click on it
@@ -30,7 +30,7 @@ When users visit `/sign-in`, they'll see:
 ```
 ┌────────────────────────────────────┐
 │                                    │
-│       Sign in to LangHub           │
+│       Sign in to Katalyst           │
 │                                    │
 │  ┌──────────────────────────────┐ │
 │  │ 🔵 Continue with Google      │ │ ← Google button
@@ -97,7 +97,7 @@ When users visit `/sign-in`, they'll see:
    - Read user email
    - Read user profile
    ↓
-4. User clicks "Authorize LangHub"
+4. User clicks "Authorize Katalyst"
    ↓
 5. Redirected back to your app
    ↓
@@ -371,7 +371,7 @@ function GitHubRepoImporter() {
     const response = await fetch(`https://api.github.com/users/${username}/repos`);
     const repos = await response.json();
     
-    // Now you can import these repos into your LangHub backend!
+    // Now you can import these repos into your Katalyst backend!
     console.log('User repos:', repos);
   }
   

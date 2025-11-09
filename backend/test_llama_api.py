@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Test script to verify Llama API connection"""
+"""Test script to verify   API connection"""
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -7,15 +7,15 @@ from openai import OpenAI
 # Load environment variables
 load_dotenv()
 
-api_key = os.getenv('LLAMA_API_KEY')
+api_key = os.getenv(' LLAMA_API_KEY')
 print(f"API Key loaded: {api_key[:20]}..." if api_key else "API Key NOT loaded")
 
 # Test with different base URLs and model names
 test_configs = [
-    {"base_url": "https://api.llama.com/v1", "model": "meta-llama/Llama-3.3-70B-Instruct"},
-    {"base_url": "https://api.llama.com/v1", "model": "llama3.3-70b-instruct"},
-    {"base_url": "https://api.llama.com/v1", "model": "Llama-3.3-70B-Instruct"},
-    {"base_url": "https://api.llama.com", "model": "meta-llama/Llama-3.3-70B-Instruct"},
+    {"base_url": "https://api. .com/v1", "model": "meta- / -3.3-70B-Instruct"},
+    {"base_url": "https://api. .com/v1", "model": " 3.3-70b-instruct"},
+    {"base_url": "https://api. .com/v1", "model": " -3.3-70B-Instruct"},
+    {"base_url": "https://api. .com", "model": "meta- / -3.3-70B-Instruct"},
 ]
 
 for config in test_configs:

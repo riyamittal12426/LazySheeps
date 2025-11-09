@@ -307,14 +307,14 @@ Output:
 
 ### Scenario 2: Team Check-in
 ```
-Command: /langhub team-health
+Command: /katalyst team-health
 Output: DORA metrics, health indicators, radar chart
 Use case: Daily standup, sprint reviews
 ```
 
 ### Scenario 3: PR Review
 ```
-Command: /langhub pr 123 owner/repo
+Command: /katalyst pr 123 owner/repo
 Output: AI summary with purpose, changes, risks, recommendation
 Use case: Code review preparation
 ```

@@ -1,4 +1,4 @@
-# 🚀 LangHub - Hackathon Edition
+# 🚀 Katalyst - Hackathon Edition
 
 **AI-Powered Developer Analytics & Team Collaboration Platform**
 
@@ -243,7 +243,7 @@ Open-source teams lack visibility into:
 - Motivating contributors
 
 ### Solution
-**LangHub** uses AI and gamification to:
+**Katalyst** uses AI and gamification to:
 1. **Predict burnout** before it happens
 2. **Visualize team dynamics** with network graphs
 3. **Motivate contributors** with XP and badges
@@ -263,7 +263,7 @@ Open-source teams lack visibility into:
 *"Managing open-source teams is chaotic. Maintainers don't know who's burning out, how teams collaborate, or when projects will finish."*
 
 ### Minute 2: Solution Overview (1min)
-*"LangHub transforms GitHub data into actionable insights using AI and gamification."*
+*"Katalyst transforms GitHub data into actionable insights using AI and gamification."*
 - Show dashboard
 - Highlight key metrics
 
@@ -330,7 +330,7 @@ npm run lint
 
 ### Environment Variables
 ```bash
-LLAMA_API_KEY=your_api_key_here
+ LLAMA_API_KEY=your_api_key_here
 DJANGO_SECRET_KEY=your_secret_key
 DEBUG=True
 ```
@@ -355,7 +355,7 @@ MIT License - See [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - GitHub API for data
-- Llama AI for insights
+-   AI for insights
 - React Force Graph for visualization
 - Django community
 
@@ -380,7 +380,7 @@ MIT License - See [LICENSE](LICENSE) file
 
 For questions or demo requests:
 - GitHub: [HimanshuPathak2725](https://github.com/HimanshuPathak2725)
-- Project: [LangHub](https://github.com/HimanshuPathak2725/LangHub)
+- Project: [Katalyst](https://github.com/HimanshuPathak2725/Katalyst)
 
 ---
 

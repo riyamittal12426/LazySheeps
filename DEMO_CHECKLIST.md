@@ -3,7 +3,7 @@
 ## 🚀 NEW FEATURE ALERT!
 
 ### Dynamic GitHub Repository Import
-**MAJOR UPDATE:** LangHub now supports importing ANY public GitHub repository!
+**MAJOR UPDATE:** Katalyst now supports importing ANY public GitHub repository!
 
 **Demo Strategy Options:**
 
@@ -59,7 +59,7 @@
 > 1. They can't see when developers are burning out
 > 2. They don't understand team collaboration patterns
 > 3. They can't predict project timelines
-> We built LangHub to solve all three using AI and gamification."
+> We built Katalyst to solve all three using AI and gamification."
 
 **Action:** Start on main dashboard
 
@@ -67,7 +67,7 @@
 
 #### Feature 1: Analytics Dashboard (1 minute)
 **Script:**
-> "LangHub transforms raw GitHub data into actionable insights. Our dashboard gives you a bird's eye view of your entire organization."
+> "Katalyst transforms raw GitHub data into actionable insights. Our dashboard gives you a bird's eye view of your entire organization."
 
 **Demo Steps:**
 1. Click "Analytics" in sidebar
@@ -127,7 +127,7 @@
 **WOW Factor:**
 - Show the weekly activity bar chart
 - Point out if risk is increasing
-- Mention: "This is unique to LangHub - no other platform does this"
+- Mention: "This is unique to Katalyst - no other platform does this"
 
 ---
 
@@ -155,7 +155,7 @@
 
 #### Closing: Tech Stack & Impact (30 seconds)
 **Script:**
-> "LangHub is built with Django for robust backend APIs, React for modern UI, and machine learning for predictions. It's production-ready and scalable."
+> "Katalyst is built with Django for robust backend APIs, React for modern UI, and machine learning for predictions. It's production-ready and scalable."
 
 **Show:**
 - Quick scroll through code (optional)

@@ -398,11 +398,11 @@ def discord_webhook(request):
     try:
         payload = json.loads(request.body)
         
-        # Discord bot command format: !langhub <command> <args>
+        # Discord bot command format: !katalyst <command> <args>
         content = payload.get('content', '')
         
-        if content.startswith('!langhub '):
-            command_text = content[9:].strip()  # Remove '!langhub '
+        if content.startswith('!katalyst '):
+            command_text = content[9:].strip()  # Remove '!katalyst '
             parts = command_text.split()
             
             if not parts:

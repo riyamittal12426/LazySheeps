@@ -1,4 +1,4 @@
-# LangHub - Industry-Ready Feature Roadmap
+# Katalyst - Industry-Ready Feature Roadmap
 
 ## 📊 Current State Analysis
 
@@ -13,12 +13,12 @@
 - ✅ Gamification system (XP, levels, badges)
 - ✅ Burnout detection & work pattern analysis
 - ✅ Repository health scoring
-- ✅ Natural language chatbot (Llama)
+- ✅ Natural language chatbot ( )
 
 #### Technical Stack
 - **Backend:** Django 5.2, DRF, SQLite
 - **Frontend:** React 19, Vite, TailwindCSS
-- **AI:** Google Gemini, Llama API
+- **AI:** Google Gemini,   API
 - **Auth:** JWT (transitioning to Clerk)
 - **Visualization:** react-force-graph, Recharts
 
@@ -561,7 +561,7 @@ Features:
 - Branded exports
 
 Pricing:
-- Free: LangHub branding
+- Free: Katalyst branding
 - Business: Custom logo
 - Enterprise: Full white-label
 

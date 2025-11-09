@@ -1,14 +1,14 @@
 # GitHub OAuth Setup Guide
 
 ## Overview
-This guide will help you set up GitHub OAuth authentication for OrgLens, enabling users to sign in with GitHub and select repositories to import (similar to Vercel's onboarding flow).
+This guide will help you set up GitHub OAuth authentication for Katalyst, enabling users to sign in with GitHub and select repositories to import (similar to Vercel's onboarding flow).
 
 ## 1. Create a GitHub OAuth App
 
 1. Go to GitHub Settings: https://github.com/settings/developers
 2. Click "OAuth Apps" → "New OAuth App"
 3. Fill in the following details:
-   - **Application name**: `OrgLens` (or your preferred name)
+   - **Application name**: `Katalyst` (or your preferred name)
    - **Homepage URL**: `http://localhost:5173` (for development)
    - **Authorization callback URL**: `http://localhost:3000/auth/github/callback`
    - **Application description**: `Understanding your codebase and connecting with experts`
@@ -61,7 +61,7 @@ The frontend should start on `http://localhost:5173`
 
 1. **Navigate to Sign In**: Go to `http://localhost:5173/sign-in`
 2. **Click "Continue with GitHub"**: This will redirect you to GitHub
-3. **Authorize the App**: GitHub will ask you to authorize OrgLens
+3. **Authorize the App**: GitHub will ask you to authorize Katalyst
 4. **Select Repositories**: After authorization, you'll be redirected to the repository selection page
 5. **Import Repositories**: Select the repositories you want to import and click "Import"
 6. **Dashboard**: You'll be redirected to the dashboard with your imported repositories
@@ -102,7 +102,7 @@ Body: {
   "repositories": ["owner/repo1", "owner/repo2"]
 }
 ```
-Imports the selected repositories into OrgLens.
+Imports the selected repositories into Katalyst.
 
 ## Frontend Routes
 

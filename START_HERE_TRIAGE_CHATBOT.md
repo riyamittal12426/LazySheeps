@@ -295,7 +295,7 @@ curl http://localhost:8000/api/chatbot/risk-alerts/
 ### Level 3: Team Collaboration
 - [ ] Set up Slack workspace
 - [ ] Configure Slack webhook
-- [ ] Test `/langhub` commands
+- [ ] Test `/katalyst` commands
 - [ ] Or set up Discord bot
 
 ### Level 4: Production Deployment

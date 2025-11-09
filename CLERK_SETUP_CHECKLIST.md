@@ -34,7 +34,7 @@
 Once you have your account, configure these in Clerk dashboard:
 
 ### Application Settings
-- [ ] Set application name to "LangHub"
+- [ ] Set application name to "Katalyst"
 - [ ] Upload logo (optional)
 
 ### Paths (Important!)

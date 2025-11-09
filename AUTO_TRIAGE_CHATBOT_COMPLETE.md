@@ -104,8 +104,8 @@ React 19 + Tailwind CSS
 - Automatic labeling and assignment
 
 ### Chat Platform Integration:
-- Slack slash commands (`/langhub`)
-- Discord bot commands (`!langhub`)
+- Slack slash commands (`/katalyst`)
+- Discord bot commands (`!katalyst`)
 - Webhook URL configuration
 - Real-time team notifications
 

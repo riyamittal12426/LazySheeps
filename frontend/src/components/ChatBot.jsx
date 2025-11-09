@@ -134,7 +134,7 @@ const ChatBot = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🤖 LangHub ChatBot
+            🤖 Katalyst ChatBot
           </h1>
           <p className="text-gray-600">
             AI-powered Slack/Discord commands for team insights
@@ -220,7 +220,7 @@ const ChatBot = () => {
                   <div className="mt-4 p-3 bg-gray-100 rounded text-sm">
                     <span className="font-medium text-gray-700">Slack Command:</span>
                     <code className="ml-2 text-purple-600">
-                      /langhub pr {prNumber || '123'} {repoName}
+                      /katalyst pr {prNumber || '123'} {repoName}
                     </code>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ const ChatBot = () => {
                   <div className="mt-4 p-3 bg-gray-100 rounded text-sm">
                     <span className="font-medium text-gray-700">Slash Command:</span>
                     <code className="ml-2 text-purple-600">
-                      /langhub team-health {repositoryId || ''}
+                      /katalyst team-health {repositoryId || ''}
                     </code>
                   </div>
                 </div>
@@ -300,7 +300,7 @@ const ChatBot = () => {
 
                   <div className="mt-4 p-3 bg-gray-100 rounded text-sm">
                     <span className="font-medium text-gray-700">Slack Command:</span>
-                    <code className="ml-2 text-purple-600">/langhub digest</code>
+                    <code className="ml-2 text-purple-600">/katalyst digest</code>
                   </div>
 
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
@@ -336,7 +336,7 @@ const ChatBot = () => {
 
                   <div className="mt-4 p-3 bg-gray-100 rounded text-sm">
                     <span className="font-medium text-gray-700">Slack Command:</span>
-                    <code className="ml-2 text-purple-600">/langhub risks</code>
+                    <code className="ml-2 text-purple-600">/katalyst risks</code>
                   </div>
                 </div>
               </div>
@@ -394,7 +394,7 @@ const ChatBot = () => {
               <h4 className="font-medium text-gray-900 mb-3">Slack Setup:</h4>
               <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
                 <li>Create a Slack app at api.slack.com/apps</li>
-                <li>Enable "Slash Commands" and add <code className="bg-gray-100 px-1 rounded">/langhub</code></li>
+                <li>Enable "Slash Commands" and add <code className="bg-gray-100 px-1 rounded">/katalyst</code></li>
                 <li>Set Request URL to: <code className="bg-gray-100 px-1 rounded text-xs">https://your-domain.com/api/webhooks/slack/</code></li>
                 <li>Add webhook URL to .env: <code className="bg-gray-100 px-1 rounded text-xs">SLACK_WEBHOOK_URL=...</code></li>
                 <li>Install app to your workspace</li>
@@ -407,7 +407,7 @@ const ChatBot = () => {
                 <li>Create a Discord bot at discord.com/developers</li>
                 <li>Add webhook to your channel</li>
                 <li>Add webhook URL to .env: <code className="bg-gray-100 px-1 rounded text-xs">DISCORD_WEBHOOK_URL=...</code></li>
-                <li>Use commands with <code className="bg-gray-100 px-1 rounded">!langhub</code> prefix</li>
+                <li>Use commands with <code className="bg-gray-100 px-1 rounded">!katalyst</code> prefix</li>
               </ol>
             </div>
           </div>

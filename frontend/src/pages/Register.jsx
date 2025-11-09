@@ -49,7 +49,7 @@ const Register = () => {
         {/* Logo/Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            🌐 LangHub
+            🌐 Katalyst
           </h1>
           <p className="text-gray-300">Create your account</p>
         </div>

@@ -58,7 +58,7 @@ const EnhancedDashboard = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-bold mb-2">🚀 LangHub Analytics</h1>
+          <h1 className="text-4xl font-bold mb-2">🚀 Katalyst Analytics</h1>
           <p className="text-blue-100 text-lg">AI-Powered Developer Insights & Team Analytics</p>
           
           {/* Stats Cards */}

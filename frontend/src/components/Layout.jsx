@@ -21,7 +21,6 @@ import {
     ExclamationTriangleIcon,
     ChatBubbleBottomCenterTextIcon,
 } from '@heroicons/react/24/outline';
-import LlamaChat from './LlamaChat';
 
 // --- Define App Navigation ---
 const appNavigation = [
@@ -36,7 +35,7 @@ const appNavigation = [
 
 // Placeholder teams data
 const teams = [
-    { id: 1, name: 'Meta Llama', href: '#', initial: 'M', current: false },
+    { id: 1, name: 'Meta  ', href: '#', initial: 'M', current: false },
 ];
 
 function classNames(...classes) {
@@ -157,7 +156,7 @@ export default function Layout() {
                                 src="/logo.png"
                                 className="h-8 w-auto"
                             />
-                            <h2 className="ml-3 text-lg font-semibold text-white">LangHub</h2>
+                            <h2 className="ml-3 text-lg font-semibold text-white">Katalyst</h2>
                         </div>
                         <nav className="flex flex-1 flex-col">
                             <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -232,7 +231,7 @@ export default function Layout() {
                         <span className="sr-only">Open sidebar</span>
                         <Bars3Icon aria-hidden="true" className="size-6" />
                     </button>
-                    <div className="flex-1 text-sm font-semibold leading-6 text-white">LangHub</div>
+                    <div className="flex-1 text-sm font-semibold leading-6 text-white">Katalyst</div>
                     <img 
                         src={user?.avatar_url} 
                         alt={user?.username}
@@ -242,12 +241,9 @@ export default function Layout() {
 
                 {/* Main Content Area */}
                 <main className="py-10 lg:pl-72 h-full">
-                    <div className="px-4 sm:px-6 lg:px-8 pb-20"> {/* Added padding bottom for chat component */}
+                    <div className="px-4 sm:px-6 lg:px-8">
                         <Outlet />
                     </div>
-                    
-                    {/* Add the LlamaChat component here */}
-                    <LlamaChat />
                 </main>
             </div>
         </>

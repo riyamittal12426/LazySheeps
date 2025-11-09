@@ -1,7 +1,7 @@
 # GitHub Webhooks Setup Guide
 
 ## Overview
-GitHub webhooks enable real-time synchronization of repository data. When events occur (commits, PRs, issues), GitHub sends immediate notifications to LangHub.
+GitHub webhooks enable real-time synchronization of repository data. When events occur (commits, PRs, issues), GitHub sends immediate notifications to Katalyst.
 
 ## Prerequisites
 - ✅ Backend running and accessible from internet
@@ -180,7 +180,7 @@ python manage.py runserver
 - Consider ngrok paid plan for persistent URLs
 
 ### Repository Not Found
-**Cause:** Webhook received for repo not imported to LangHub
+**Cause:** Webhook received for repo not imported to Katalyst
 **Fix:**
 ```bash
 # Import the repository first
@@ -322,5 +322,5 @@ def github_webhook(request):
 
 ## Support
 - GitHub Webhooks Docs: https://docs.github.com/webhooks
-- LangHub Issues: Open issue on GitHub
+- Katalyst Issues: Open issue on GitHub
 - Webhook Debugger: https://webhook.site (for testing payloads)

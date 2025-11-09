@@ -148,10 +148,10 @@ Features:
 ### What It Does
 
 Provides team collaboration commands:
-- `/langhub pr <number>` - AI summary of pull requests
-- `/langhub team-health` - DORA metrics & radar chart
-- `/langhub digest` - Daily activity summary
-- `/langhub risks` - Detect potential issues
+- `/katalyst pr <number>` - AI summary of pull requests
+- `/katalyst team-health` - DORA metrics & radar chart
+- `/katalyst digest` - Daily activity summary
+- `/katalyst risks` - Detect potential issues
 
 ### API Endpoints
 
@@ -276,14 +276,14 @@ GET /api/chatbot/risk-alerts/
 1. **Create Slack App**
    - Go to https://api.slack.com/apps
    - Click "Create New App" → "From scratch"
-   - Name it "LangHub Bot"
+   - Name it "Katalyst Bot"
 
 2. **Enable Slash Commands**
    - Go to "Slash Commands"
    - Click "Create New Command"
-   - Command: `/langhub`
+   - Command: `/katalyst`
    - Request URL: `https://your-domain.com/api/webhooks/slack/`
-   - Description: "LangHub team insights"
+   - Description: "Katalyst team insights"
 
 3. **Add Webhook**
    - Go to "Incoming Webhooks"
@@ -331,18 +331,18 @@ GET /api/chatbot/risk-alerts/
 
 **Slack:**
 ```
-/langhub pr 123 owner/repo
-/langhub team-health
-/langhub digest
-/langhub risks
+/katalyst pr 123 owner/repo
+/katalyst team-health
+/katalyst digest
+/katalyst risks
 ```
 
 **Discord:**
 ```
-!langhub pr 123 owner/repo
-!langhub team-health
-!langhub digest
-!langhub risks
+!katalyst pr 123 owner/repo
+!katalyst team-health
+!katalyst digest
+!katalyst risks
 ```
 
 ### Frontend Component
@@ -478,9 +478,9 @@ Return to Slack/Discord
 
 ### ChatBot
 
-1. **PR Reviews**: `/langhub pr 123` in Slack channel
+1. **PR Reviews**: `/katalyst pr 123` in Slack channel
 2. **Daily Standup**: Automated digest posted every morning
-3. **Team Metrics**: `/langhub team-health` for sprint retrospectives
+3. **Team Metrics**: `/katalyst team-health` for sprint retrospectives
 4. **Risk Monitoring**: Scheduled risk alerts to management channel
 
 ---

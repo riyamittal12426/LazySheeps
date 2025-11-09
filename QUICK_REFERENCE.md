@@ -1,4 +1,4 @@
-# 🎯 Quick Reference - LangHub Features
+# 🎯 Quick Reference - Katalyst Features
 
 ## 🚀 URLs
 - **Frontend**: http://localhost:5175/
@@ -103,7 +103,7 @@ GET  /api/search/contributors/?q={query}
 3. **Gamification** (1 min) - Badges & leaderboard
 
 ### Impact Statement:
-> "LangHub protects developer wellbeing through AI burnout detection, visualizes team dynamics with collaboration networks, and motivates contributors through gamification."
+> "Katalyst protects developer wellbeing through AI burnout detection, visualizes team dynamics with collaboration networks, and motivates contributors through gamification."
 
 ## 🎨 Visual Elements
 
@@ -137,7 +137,7 @@ npm run dev
 ### Enable OAuth (Google & GitHub):
 ```
 1. Go to https://dashboard.clerk.com
-2. Select LangHub app
+2. Select Katalyst app
 3. User & Authentication → Social Connections
 4. Toggle on Google and GitHub (use dev keys)
 5. Test sign-in with OAuth!
@@ -175,7 +175,7 @@ python manage.py migrate
 
 ## 🗣️ Elevator Pitch (30 seconds)
 
-> "LangHub is an AI-powered analytics platform for open-source teams. We predict developer burnout before it happens, visualize team collaboration patterns, and motivate contributors through gamification. Built with Django and React, we're ready to help thousands of teams build better software while protecting developer wellbeing."
+> "Katalyst is an AI-powered analytics platform for open-source teams. We predict developer burnout before it happens, visualize team collaboration patterns, and motivate contributors through gamification. Built with Django and React, we're ready to help thousands of teams build better software while protecting developer wellbeing."
 
 ## 🤔 Q&A Prep
 

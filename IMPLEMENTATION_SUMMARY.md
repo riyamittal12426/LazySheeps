@@ -1,9 +1,9 @@
-# 🎯 Implementation Summary - LangHub Hackathon Edition
+# 🎯 Implementation Summary - Katalyst Hackathon Edition
 
 ## 🚀 **LATEST: GitHub OAuth Integration with Vercel-Style Onboarding** (Just Implemented!)
 
 ### Game-Changing Feature
-LangHub now supports **GitHub OAuth authentication with Vercel-like repository selection** - seamless onboarding flow for importing user's own repositories!
+Katalyst now supports **GitHub OAuth authentication with Vercel-like repository selection** - seamless onboarding flow for importing user's own repositories!
 
 ### What It Does
 - ✅ GitHub OAuth 2.0 authentication (like Vercel)
@@ -256,7 +256,7 @@ Statistics:
 ## 📊 Demo Flow
 
 ### Opening (30s)
-"Managing open-source teams is chaotic. We built LangHub to transform GitHub data into actionable insights using AI."
+"Managing open-source teams is chaotic. We built Katalyst to transform GitHub data into actionable insights using AI."
 
 ### Feature #1: Dashboard (1min)
 - Show analytics dashboard at `/analytics`

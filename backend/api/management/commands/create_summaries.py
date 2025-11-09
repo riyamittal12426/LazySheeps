@@ -18,9 +18,9 @@ from api.models import Issue, Commit, RepositoryWork, Contributor # Add Contribu
 # --- Configuration ---
 load_dotenv() # Load environment variables from .env file
 
-# --- Llama Settings ---
-LLAMA_MODEL = "Llama-4-Maverick-17B-128E-Instruct-FP8"
-LLAMA_BASE_URL = "https://api.llama.com/compat/v1/"
+# ---   Settings ---
+ _MODEL = " -4-Maverick-17B-128E-Instruct-FP8"
+ _BASE_URL = "https://api. .com/compat/v1/"
 
 # --- General Settings ---
 ISSUES_SYSTEM_PROMPT = """You are an AI assistant generating *detailed technical summaries* of GitHub issues based on their raw JSON data.
@@ -201,9 +201,9 @@ def process_single_contributor(
             else:
                 error_msg = "Failed to get a valid choice from API response."
 
-        except openai.RateLimitError: error_msg = "API rate limit hit (Llama endpoint)."
-        except openai.APITimeoutError: error_msg = f"API request timed out after {API_TIMEOUT}s (Llama endpoint)."
-        except openai.APIError as e: error_msg = f"API error (Llama endpoint): {e}"
+        except openai.RateLimitError: error_msg = "API rate limit hit (  endpoint)."
+        except openai.APITimeoutError: error_msg = f"API request timed out after {API_TIMEOUT}s (  endpoint)."
+        except openai.APIError as e: error_msg = f"API error (  endpoint): {e}"
         except Exception as e: error_msg = f"Unexpected error during API call: {e}"
 
     except Exception as outer_e: error_msg = f"Error processing contributor {contributor_id}: {outer_e}"
@@ -213,7 +213,7 @@ def process_single_contributor(
 
 # --- Updated Command Class ---
 class Command(BaseCommand):
-    help = f'Generates summaries for Issues, Commits, RepositoryWorks, AND Contributors using Llama ({LLAMA_MODEL}) in parallel.'
+    help = f'Generates summaries for Issues, Commits, RepositoryWorks, AND Contributors using   ({ _MODEL}) in parallel.'
 
     # Generic processing function to reduce repetition in handle()
     def _run_phase(self, phase_name, model_cls, process_func, system_prompt, api_key, base_url, model_name):
@@ -270,11 +270,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        llama_api_key = os.getenv('LLAMA_API_KEY')
-        if not llama_api_key:
-            raise CommandError("LLAMA_API_KEY environment variable not found.")
+         LLAMA_api_key = os.getenv(' LLAMA_API_KEY')
+        if not  LLAMA_api_key:
+            raise CommandError(" LLAMA_API_KEY environment variable not found.")
 
-        self.stdout.write(self.style.NOTICE(f"Using Llama model: {LLAMA_MODEL}, Base URL: {LLAMA_BASE_URL}"))
+        self.stdout.write(self.style.NOTICE(f"Using   model: { _MODEL}, Base URL: { _BASE_URL}"))
         self.stdout.write(self.style.NOTICE(f"Max parallel workers: {MAX_WORKERS}, API Timeout: {API_TIMEOUT}s"))
 
         total_start_time = time.time()
@@ -283,19 +283,19 @@ class Command(BaseCommand):
         self.phase_num = 1 # Initialize phase counter for reporting
 
         # Run Phase 1: Issues
-        s, e = self._run_phase("Issues", Issue, process_single_issue, ISSUES_SYSTEM_PROMPT, llama_api_key, LLAMA_BASE_URL, LLAMA_MODEL)
+        s, e = self._run_phase("Issues", Issue, process_single_issue, ISSUES_SYSTEM_PROMPT,  LLAMA_api_key,  _BASE_URL,  _MODEL)
         overall_success_count += s; overall_error_count += e
 
         # Run Phase 2: Commits
-        s, e = self._run_phase("Commits", Commit, process_single_commit, COMMITS_SYSTEM_PROMPT, llama_api_key, LLAMA_BASE_URL, LLAMA_MODEL)
+        s, e = self._run_phase("Commits", Commit, process_single_commit, COMMITS_SYSTEM_PROMPT,  LLAMA_api_key,  _BASE_URL,  _MODEL)
         overall_success_count += s; overall_error_count += e
 
         # Run Phase 3: RepositoryWork
-        s, e = self._run_phase("RepoWork", RepositoryWork, process_single_repo_work, REPO_WORK_SYSTEM_PROMPT, llama_api_key, LLAMA_BASE_URL, LLAMA_MODEL)
+        s, e = self._run_phase("RepoWork", RepositoryWork, process_single_repo_work, REPO_WORK_SYSTEM_PROMPT,  LLAMA_api_key,  _BASE_URL,  _MODEL)
         overall_success_count += s; overall_error_count += e
 
         # Run Phase 4: Contributors
-        s, e = self._run_phase("Contributors", Contributor, process_single_contributor, CONTRIBUTOR_SYSTEM_PROMPT, llama_api_key, LLAMA_BASE_URL, LLAMA_MODEL)
+        s, e = self._run_phase("Contributors", Contributor, process_single_contributor, CONTRIBUTOR_SYSTEM_PROMPT,  LLAMA_api_key,  _BASE_URL,  _MODEL)
         overall_success_count += s; overall_error_count += e
 
 

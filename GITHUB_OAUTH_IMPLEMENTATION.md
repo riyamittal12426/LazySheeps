@@ -1,6 +1,6 @@
 # GitHub OAuth Implementation - Complete Guide
 
-This guide shows how to implement GitHub OAuth with full repository access, allowing users to browse and import their GitHub repositories directly into LangHub (similar to Vercel's workflow).
+This guide shows how to implement GitHub OAuth with full repository access, allowing users to browse and import their GitHub repositories directly into Katalyst (similar to Vercel's workflow).
 
 ## Part 1: GitHub OAuth App Setup
 
@@ -15,7 +15,7 @@ This guide shows how to implement GitHub OAuth with full repository access, allo
 
    **Application name:**
    ```
-   LangHub
+   Katalyst
    ```
 
    **Homepage URL:**
@@ -242,7 +242,7 @@ def get_user_github_repos(request):
 @require_http_methods(["POST"])
 def import_github_repo(request):
     """
-    Import a specific GitHub repository into LangHub.
+    Import a specific GitHub repository into Katalyst.
     Fetches commits, contributors, and generates analytics.
     """
     try:
@@ -859,7 +859,7 @@ export default ImportRepository;
 ## What Users Will See
 
 1. **Sign in page:** "Continue with GitHub" button
-2. **GitHub permission screen:** "LangHub requests access to your repositories"
+2. **GitHub permission screen:** "Katalyst requests access to your repositories"
 3. **Import page:** Grid of all their repos
 4. **Each repo card:** Name, description, stats, "Import" button
 5. **After import:** Success message + repo appears in dashboard

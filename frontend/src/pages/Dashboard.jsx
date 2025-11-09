@@ -4,7 +4,6 @@ import { useData } from '../context/DataContext';
 import OrganizationGraph from '../components/OrganizationGraph';
 import ImportRepository from '../components/ImportRepository';
 import GitHubAppConnect from '../components/GitHubAppConnect';
-import LiveActivityFeed from '../components/LiveActivityFeed'; 
 import { 
   ChartBarIcon, 
   UserGroupIcon, 
@@ -229,7 +228,7 @@ export default function Dashboard() {
               <div>
                 <h1 className="text-2xl font-bold text-white">Hi there,</h1>
                 <p className="text-indigo-100 mt-1">
-                  Here's all you need to know about the Llama team.
+                  Here's all you need to know about the   team.
                 </p>
               </div>
             </div>
@@ -303,11 +302,6 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Live Activity Feed */}
-      <div className="mb-8">
-        <LiveActivityFeed />
       </div>
 
       {/* GitHub App Integration - ONE-CLICK ORG IMPORT */}

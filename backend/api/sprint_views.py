@@ -22,7 +22,8 @@ from django.conf import settings
 try:
     if settings.GEMINI_API_KEY:
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel('gemini-2.5-pro')
+        # Use gemini-1.5-flash for better rate limits (1500 RPD vs 50 RPD)
+        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
     else:
         gemini_model = None
 except Exception as e:

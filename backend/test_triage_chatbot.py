@@ -171,7 +171,7 @@ def test_chatbot_commands():
 def main():
     """Run all tests"""
     print("\n" + "="*60)
-    print("🚀 LangHub Auto-Triage & ChatBot Tests")
+    print("🚀 Katalyst Auto-Triage & ChatBot Tests")
     print("="*60)
     print("\nMake sure Django server is running on http://localhost:8000")
     print("Press Enter to continue...")
