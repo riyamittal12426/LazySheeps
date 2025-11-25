@@ -7,7 +7,7 @@ from openai import OpenAI
 # Load environment variables
 load_dotenv()
 
-api_key = os.getenv(' LLAMA_API_KEY')
+api_key = os.getenv('LLAMA_API_KEY')
 print(f"API Key loaded: {api_key[:20]}..." if api_key else "API Key NOT loaded")
 
 # Test with different base URLs and model names

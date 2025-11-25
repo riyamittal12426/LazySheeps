@@ -22,7 +22,7 @@ try:
     # Use gemini-1.5-flash for free tier (1500 RPD, 15 RPM vs gemini-2.5-pro's 50 RPD, 2 RPM)
     gemini_model = genai.GenerativeModel('gemini-2.5-flash')
     if settings.GEMINI_API_KEY:
-        print(f"✓ Gemini API client initialized successfully (gemini-1.5-flash)")
+        print(f"✓ Gemini API client initialized successfully (gemini-2.5-flash)")
         print(f"  API Key prefix: {settings.GEMINI_API_KEY[:20]}...")
     else:
         print("✗ GEMINI_API_KEY is not set in environment variables")

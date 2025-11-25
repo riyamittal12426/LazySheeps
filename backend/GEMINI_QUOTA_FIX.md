@@ -13,10 +13,10 @@ The code was using `gemini-2.5-pro` model which has **very strict** rate limits 
 - ❌ Only **50 requests per day**
 - ❌ Only **2 requests per minute**
 
-The code comment said "Use gemini-1.5-flash" but the actual code was using `gemini-2.5-pro`!
+The code comment said "Use gemini-2.5-flash" but the actual code was using `gemini-2.5-pro`!
 
 ## Solution Applied ✅
-Changed both files to use `gemini-1.5-flash` model:
+Changed both files to use `gemini-2.5-flash` model:
 - ✅ `backend/api/views.py` - Changed to gemini-1.5-flash
 - ✅ `backend/api/sprint_views.py` - Changed to gemini-1.5-flash
 
